@@ -1,7 +1,7 @@
 {
   "name": "libotrio",
   "version": "0.1.1",
-  "description": "Building blocks for Building Bots",
+  "description": "Liatrio SlackBot",
   "main": "lib/Botkit.js",
   "dependencies": {
     "back": "^1.0.1",
@@ -26,12 +26,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/liatrio/botkit/botkit.git"
+    "url": "https://github.com/liatrio/libotrio/libotrio.git"
   },
   "bugs": {
-    "url": "https://github.com/liatrio/botkit/issues"
+    "url": "https://github.com/liatrio/libotrio/issues"
   },
-  "homepage": "http://howdy.ai/botkit",
+  "homepage": "",
   "keywords": [
     "bots",
     "chatbots",
