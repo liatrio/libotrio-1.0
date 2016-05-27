@@ -1,5 +1,5 @@
 # [libotrio](http://github.com/liatrio/libotrio) - Libotrio - A bot for liatrio
-
+## libotrio is derived from the sample [Botkit](http://howdy.ai/botkit)
 [![npm](https://img.shields.io/npm/l/libotrio.svg)](https://spdx.org/licenses/MIT)
 
 libotrio is designed to ease the process of designing and running useful, creative bots that live inside [Slack](http://slack.com)
@@ -737,6 +737,3 @@ var controller = libotrio.slackbot({
 Instead of controller.setupWebserver(), it is possible to use a different web server to manage authentication flows, as well as serving web pages.
 
 Here is an example of [using an Express web server alongside libotrio](https://github.com/mvaragnat/libotrio-express-demo).
-
-# Chat with us at dev4slack.slack.com
-You can get an invite here: http://dev4slack.xoxco.com/.
