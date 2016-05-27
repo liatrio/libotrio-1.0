@@ -3,7 +3,8 @@
   "description": "Slackbot for liatrio",
   "repository": "https://github.com/liatrio/libotrio",
   "env": {
-    "SLACK_TOKEN": {
+    "port": 5000,
+    "token": {
       "description": "Slackbot API token",
       "required": true
     },
