@@ -1,1 +1,1 @@
-web: node libotrio
+worker: node libotrio.js
