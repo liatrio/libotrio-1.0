@@ -86,7 +86,7 @@ controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', funct
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
-        name: 'robot_face',
+        name: 'robot_face'
     }, function(err, res) {
         if (err) {
             bot.botkit.log('Failed to add emoji reaction :(', err);
@@ -101,6 +101,67 @@ controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', funct
             bot.reply(message, 'Hello.');
         }
     });
+});
+
+controller.hears(['save it'], 'direct_message,direct_mention,mention', function(bot, message) {
+    var libotrioFolder = 'https://script.google.com/a/macros/liatrio.com/s/AKfycbynHoy6cxazW1V78lNuOvG-Ex_SaAmJeQHlvSWZUUfsdwUrvpM/exec?url=';
+    bot.api.groups.history({
+      channel: message.channel,
+      count: 5
+    }, function(err, res) {
+        if (err) {
+          bot.botkit.log('Failed to get the messages :(', err);
+        }
+        if (res && res.ok) {
+          bot.reply(message, 'Getting the last image within the past 5 messages');
+          var found = false;
+
+          for (var resMessage in res.messages) {
+            var obj = res.messages[resMessage];
+            if (obj.subtype && obj.subtype == 'file_share') {
+              found = true;
+              bot.reply(message, 'Found a file named ' + obj.file.name +'.  Attempting to set share, setting sharedPublicURL to true...');
+              bot.api.files.sharedPublicURL({
+                file: obj.file.id
+              },function(err, res) {
+                  if (err) {
+                    bot.botkit.log('Failed to share the file - ', err);
+                    bot.reply(message, 'Failed to share the file due to the error: ' + err +' - You must make the file public before sharing externally.');
+                  }
+                });
+                bot.reply(message, 'After you share the file, click this link to send ' + obj.file.name + ' to google drive: ' + libotrioFolder + obj.file.url_private);
+              }
+            if (found)
+              break;
+          }
+
+          bot.api.reactions.add({
+                  timestamp: message.ts,
+                  channel: message.channel,
+                  name: 'robot_face'
+              }, function(err, res) {
+                  if (err) {
+                      bot.botkit.log('Failed to add emoji reaction :(', err);
+                  }
+              });
+       }
+    });
+
+    //
+    // if (fileList.length > 0)
+    // {
+    //     bot.reply(message, 'File count= ' + fileList.length) ;
+    // } else {
+    //     bot.reply(message, 'No files');
+    // }
+
+    // controller.storage.users.get(message.user, function(err, user) {
+    //     if (user && user.name) {
+    //         bot.reply(message, 'Image saved ' + user.name + '!!');
+    //     } else {
+    //         bot.reply(message, 'Image saved');
+    //     }
+    // });
 });
 
 controller.hears(['call me (.*)', 'my name is (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
