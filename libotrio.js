@@ -116,6 +116,17 @@ controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', funct
     });
 });
 
+controller.hears(['beerjar balance'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.storage.users.get(message.user, function(err, user) {
+      if (user) {
+        bot.reply(message, 'Beerjar total for ' + user.name + ' = $' + parseFloat(user.beerjar).toFixed(2));
+      }
+      else {
+        bot.reply(message, 'No user found for that ID yet.  Try \'beerjar me\' to create the user');
+      }
+    });
+});
+
 controller.hears(['beerjar clear'], 'direct_message,direct_mention,mention', function(bot, message) {
   controller.storage.users.get(message.user, function(err, user) {
       if (user) {
@@ -128,13 +139,13 @@ controller.hears(['beerjar clear'], 'direct_message,direct_mention,mention', fun
 });
 
 controller.hears(['beerjar add (.*)', 'beerjar me'], 'direct_message,direct_mention,mention', function(bot, message) {
-var amount = parseFloat(message.match[1]).toFixed(2);
-if (amount < 0){
-  amount = 0.00;
-}
-if (isNaN(amount)){
-  amount = parseFloat('1.00');
-}
+  var amount = parseFloat(message.match[1]).toFixed(2);
+  if (amount < 0){
+    amount = 0.00;
+  }
+  if (isNaN(amount)){
+    amount = parseFloat('1.00');
+  }
   controller.storage.users.get(message.user, function(err, user) {
       if (!user) {
         var username = 'NotNamed';
