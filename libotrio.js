@@ -116,6 +116,57 @@ controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', funct
     });
 });
 
+controller.hears(['beerjar clear'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.storage.users.get(message.user, function(err, user) {
+      if (user) {
+        user.beerjar = parseFloat(0).toFixed(2);
+        controller.storage.users.save(user, function(err, id) {
+            bot.reply(message, 'Beerjar total for ' + user.name + ' = $' + user.beerjar);
+        });
+      }
+    });
+});
+
+controller.hears(['beerjar add (.*)', 'beerjar me'], 'direct_message,direct_mention,mention', function(bot, message) {
+var amount = parseFloat(message.match[1]).toFixed(2);
+if (amount < 0){
+  amount = 0.00;
+}
+if (isNaN(amount)){
+  amount = parseFloat('1.00');
+}
+  controller.storage.users.get(message.user, function(err, user) {
+      if (!user) {
+        var username = 'NotNamed';
+        bot.api.users.info({user : message.user}, function(err, res){
+              if (err) {
+                bot.botkit.log('Failed to get the messages :(', err);
+              }
+              if (res && res.ok) {
+                username = res.user['name'];
+              }
+        });
+        console.log('Username has been found as ' + username);
+        user = {
+            id: message.user,
+            name: username
+        };
+      }
+
+      if (!user.beerjar){
+          user.beerjar = amount;
+      }
+      else {
+          user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
+      }
+
+      console.log('message user name =' + message.user);
+      controller.storage.users.save(user, function(err, id) {
+          bot.reply(message, 'Adding $'+ amount +' to the ' + user.name + ' beerjar.  Beerjar total for ' + user.name + ' = $' + user.beerjar);
+      });
+  });
+})
+
 controller.hears(['save it'], 'direct_message,direct_mention,mention', function(bot, message) {
     var libotrioFolder = 'https://script.google.com/a/macros/liatrio.com/s/AKfycbynHoy6cxazW1V78lNuOvG-Ex_SaAmJeQHlvSWZUUfsdwUrvpM/exec?url=';
     var found = false;
