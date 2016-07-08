@@ -116,6 +116,21 @@ controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', funct
     });
 });
 
+controller.hears(['beerjar total'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.storage.users.all(function(err, users) {
+    var userList = '';
+    if (users)
+    {
+      for (var obj in users)
+      {
+        var user = users[obj];
+        userList = userList + user.name + ' :beers: $' + user.beerjar + '\n';
+      }
+      bot.reply(message, '*Beerjar Totals:* \n' + userList);
+    }
+  })
+});
+
 controller.hears(['beerjar balance'], 'direct_message,direct_mention,mention', function(bot, message) {
   controller.storage.users.get(message.user, function(err, user) {
       if (user) {
