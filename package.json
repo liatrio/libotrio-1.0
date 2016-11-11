@@ -22,7 +22,6 @@
     "winston": "^2.1.1"
   },
   "scripts": {
-    "pretest": "jscs ./lib/",
     "test": "mocha tests/*.js"
   },
   "repository": {
