@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Provisioning script that installs redis/nodejs and sets environment variables
+$provision = <<SCRIPT
+  yum update
+  yum install -y wget
+  # Install Redis
+  wget -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/e/
+  rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-*.rpm
+  yum install -y redis
+  systemctl start redis.service
+  # Install Node/npm
+  curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
+  yum install -y nodejs
+  # Set environment variables
+  echo 'REDISCLOUD_URL=redis://libotrio:libotrio@localhost:6379' >> /etc/environment
+  # Cleanup
+  rm -r dl.fedoraproject.org
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.vm.provision "shell", inline: $provision
+end
+
