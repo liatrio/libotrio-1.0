@@ -87,7 +87,7 @@ var redisStorage = redis({
 
 var controller = Botkit.slackbot({
     storage: redisStorage,
-    debug: true
+    debug: false
 });
 
 var bot = controller.spawn({
@@ -112,6 +112,20 @@ bot.sendWebhook({
   channel: '#libotrio-dev',
 }, function(err, res) {
   console.log(err, res);
+});
+
+// Register shutdown message to #libotrio-dev
+process.on('SIGTERM', function() {
+  bot.sendWebhook({
+    text: 'Restarting to apply updates. Check ' + 
+    '<https://dashboard.heroku.com/pipelines/c6373f4b-dd80-4c94-abb9-aeb4ce12a7ab|Heroku> ' + 
+    'if anything goes wrong. See you on the other side!',
+    channel: 'libotrio-dev',
+  }, function(err, res) {
+    console.log('callback called');
+    bot.destroy()
+    process.exit(0);
+  });
 });
 
 bot.startRTM();
