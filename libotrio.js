@@ -105,6 +105,7 @@ require('./features/nickname')(bot, controller);
 require('./features/saveit')(bot, controller);
 require('./features/shutdown')(bot, controller);
 require('./features/whoami')(bot, controller);
+require('./features/promote')(bot, controller);
 
 // Announce version to #libotrio-dev
 bot.sendWebhook({
