@@ -12,7 +12,7 @@ module.exports = function(bot, controller) {
             'direct_message,direct_mention,mention', function(bot, message) {
 
         request.get(jobTriggerUrl, function(error, response, body) {
-            if (!error && response.statusCode == 200 && false) {
+            if (!error && response.statusCode == 200) {
               bot.reply(message,
                   ':robot_face: I am Libotrio v' + config.version +
                   '. I have been running for ' + uptime + ' on ' + hostname + '.');
