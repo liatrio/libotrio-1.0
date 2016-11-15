@@ -6,21 +6,25 @@ var request = require('request')
 
 module.exports = function(bot, controller) {
 
-    var jobTriggerUrl = 'https://build.liatrio.com/job/Libotrio/job/libotrio-deploy-production/build?token=libotrio-production'
+    var jobTriggerUrl = 'https://admin:' + process.env.JENKINS_API_KEY + '@build.liatrio.com/job/Libotrio/job/libotrio-deploy-production/build?token=libotrio-production-deploy'
+    console.log(jobTriggerUrl);
 
     controller.hears(['promote to prod'],
             'direct_message,direct_mention,mention', function(bot, message) {
 
-        request.get(jobTriggerUrl, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-              bot.reply(message,
-                  ':robot_face: I am Libotrio v' + config.version +
-                  '. I have been running for ' + uptime + ' on ' + hostname + '.');
+        request.get({
+          'rejectUnauthorized': false,
+          'url': jobTriggerUrl,
+        }, function (error, response, body) {
+            console.log(error);
+            if (!error && (response.statusCode == 200 || response.statusCode == 201)) {
+              bot.reply(message, 'Deployment job triggered');
             }
             else {
-                bot.reply(message,':middle_finger:');
+                bot.reply(message,':middle_finger: ' + response.statusCode + ' ' + error);
             }
         });
+
     });
 }
 
