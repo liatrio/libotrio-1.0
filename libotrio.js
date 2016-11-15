@@ -72,6 +72,8 @@ if (!process.env.token) {
 var Botkit = require('./lib/Botkit.js');
 var redis = require('./lib/storage/redis_storage');
 var url = require('url');
+var request = require('request')
+var config = require('./package')
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 console.log(redisURL);
@@ -89,7 +91,10 @@ var controller = Botkit.slackbot({
 });
 
 var bot = controller.spawn({
-    token: process.env.token
+    token: process.env.token,
+    incoming_webhook: {
+      url: process.env.webhookurl
+    }
 })
 
 // Install features
@@ -100,6 +105,14 @@ require('./features/nickname')(bot, controller);
 require('./features/saveit')(bot, controller);
 require('./features/shutdown')(bot, controller);
 require('./features/whoami')(bot, controller);
+
+// Announce version to #libotrio-dev
+bot.sendWebhook({
+  text: 'Hello World! I am running Libotrio v' + config.version + '.',
+  channel: '#libotrio-dev',
+}, function(err, res) {
+  console.log(err, res);
+});
 
 bot.startRTM();
 

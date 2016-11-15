@@ -1,4 +1,5 @@
 var os = require('os');
+var config = require('../package')
 
 module.exports = function(bot, controller) {
 
@@ -20,16 +21,15 @@ module.exports = function(bot, controller) {
         return uptime;
     }
 
-    controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
+    controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name', 'about'],
             'direct_message,direct_mention,mention', function(bot, message) {
 
         var hostname = os.hostname();
         var uptime = formatUptime(process.uptime());
 
         bot.reply(message,
-            ':robot_face: I am a bot named <@' + bot.identity.name +
-            '>. I have been running for ' + uptime + ' on ' + hostname + '.');
+            ':robot_face: I am Libotrio v' + config.version +
+            '. I have been running for ' + uptime + ' on ' + hostname + '.');
     });
 
 }
-
