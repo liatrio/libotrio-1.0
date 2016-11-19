@@ -69,11 +69,10 @@ if (!process.env.token) {
   process.exit(1);
 }
 
-var Botkit = require('./lib/Botkit.js');
-var redis = require('./lib/storage/redis_storage');
+var Botkit = require('botkit');
+var redis = require('botkit-storage-redis');
 var url = require('url');
 var request = require('request');
-var config = require('./package');
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 
