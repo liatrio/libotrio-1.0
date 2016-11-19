@@ -1,9 +1,9 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-           ______     ______     ______   __  __     __     ______
-          /\  == \   /\  __ \   /\__  _\ /\ \/ /    /\ \   /\__  _\
-          \ \  __<   \ \ \/\ \  \/_/\ \/ \ \  _"-.  \ \ \  \/_/\ \/
-           \ \_____\  \ \_____\    \ \_\  \ \_\ \_\  \ \_\    \ \_\
-            \/_____/   \/_____/     \/_/   \/_/\/_/   \/_/     \/_/
+______     ______     ______   __  __     __     ______
+/\  == \   /\  __ \   /\__  _\ /\ \/ /    /\ \   /\__  _\
+\ \  __<   \ \ \/\ \  \/_/\ \/ \ \  _"-.  \ \ \  \/_/\ \/
+\ \_____\  \ \_____\    \ \_\  \ \_\ \_\  \ \_\    \ \_\
+\/_____/   \/_____/     \/_/   \/_/\/_/   \/_/     \/_/
 
 
 This is a sample Slack bot built with Botkit.
@@ -15,87 +15,86 @@ This bot demonstrates many of the core features of Botkit:
 * Reply to messages
 * Use the conversation system to ask questions
 * Use the built in storage system to store and retrieve information
-  for a user.
+for a user.
 
 # RUN THE BOT:
 
-  Get a Bot token from Slack:
+Get a Bot token from Slack:
 
-    -> http://my.slack.com/services/new/bot
+-> http://my.slack.com/services/new/bot
 
-  Run your bot from the command line:
+Run your bot from the command line:
 
-    token=<MY TOKEN> node slack_bot.js
+token=<MY TOKEN> node slack_bot.js
 
 # USE THE BOT:
 
-  Find your bot inside Slack to send it a direct message.
+Find your bot inside Slack to send it a direct message.
 
-  Say: "Hello"
+Say: "Hello"
 
-  The bot will reply "Hello!"
+The bot will reply "Hello!"
 
-  Say: "who are you?"
+Say: "who are you?"
 
-  The bot will tell you its name, where it running, and for how long.
+The bot will tell you its name, where it running, and for how long.
 
-  Say: "Call me <nickname>"
+Say: "Call me <nickname>"
 
-  Tell the bot your nickname. Now you are friends.
+Tell the bot your nickname. Now you are friends.
 
-  Say: "who am I?"
+Say: "who am I?"
 
-  The bot will tell you your nickname, if it knows one for you.
+The bot will tell you your nickname, if it knows one for you.
 
-  Say: "shutdown"
+Say: "shutdown"
 
-  The bot will ask if you are sure, and then shut itself down.
+The bot will ask if you are sure, and then shut itself down.
 
-  Make sure to invite your bot into other channels using /invite @<my bot>!
+Make sure to invite your bot into other channels using /invite @<my bot>!
 
 # EXTEND THE BOT:
 
-  Botkit has many features for building cool and useful bots!
+Botkit has many features for building cool and useful bots!
 
-  Read all about it here:
+Read all about it here:
 
-    -> http://howdy.ai/botkit
+-> http://howdy.ai/botkit
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
 if (!process.env.token) {
-    console.log('Error: Specify token in environment');
-    process.exit(1);
+  console.log('Error: Specify token in environment');
+  process.exit(1);
 }
 
 var Botkit = require('./lib/Botkit.js');
 var redis = require('./lib/storage/redis_storage');
 var url = require('url');
-var request = require('request')
-var config = require('./package')
+var request = require('request');
+var config = require('./package');
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
-console.log(redisURL);
 
 var redisStorage = redis({
-    namespace: 'libotrio',
-    host: redisURL.hostname,
-    port: redisURL.port,
-    auth_pass: redisURL.auth.split(":")[1]
+  namespace: 'libotrio',
+  host: redisURL.hostname,
+  port: redisURL.port,
+  auth_pass: redisURL.auth.split(":")[1]
 });
 
 var controller = Botkit.slackbot({
-    storage: redisStorage,
-    debug: false
+  storage: redisStorage,
+  debug: false
 });
 
 var bot = controller.spawn({
-    token: process.env.token,
-    incoming_webhook: {
-      url: process.env.webhookurl
-    }
-})
+  token: process.env.token,
+  incoming_webhook: {
+    url: process.env.webhookurl
+  }
+});
 
 // Install features
 require('./features/about')(bot, controller);
@@ -107,27 +106,4 @@ require('./features/shutdown')(bot, controller);
 require('./features/whoami')(bot, controller);
 require('./features/promote')(bot, controller);
 
-// Announce version to #libotrio-dev
-bot.sendWebhook({
-  text: 'Hello World! I am running Libotrio v' + config.version + '.',
-  channel: '#libotrio-dev',
-}, function(err, res) {
-  console.log(err, res);
-});
-
-// Register shutdown message to #libotrio-dev
-process.on('SIGTERM', function() {
-  bot.sendWebhook({
-    text: 'Restarting to apply updates. Check ' + 
-    '<https://dashboard.heroku.com/pipelines/c6373f4b-dd80-4c94-abb9-aeb4ce12a7ab|Heroku> ' + 
-    'if anything goes wrong. See you on the other side!',
-    channel: 'libotrio-dev',
-  }, function(err, res) {
-    console.log('callback called');
-    bot.destroy()
-    process.exit(0);
-  });
-});
-
 bot.startRTM();
-
