@@ -1,25 +1,17 @@
 {
   "name": "libotrio",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Liatrio SlackBot",
-  "main": "lib/Botkit.js",
+  "main": "libotrio",
   "dependencies": {
-    "back": "^1.0.1",
-    "body-parser": "^1.14.2",
+    "botkit": "^0.4.1",
+    "botkit-storage-redis": "^1.1.0",
     "redis": "^2.4.2",
-    "express": "^4.13.3",
-    "https-proxy-agent": "^1.0.0",
-    "jfs": "^0.2.6",
-    "mustache": "^2.2.1",
-    "request": "^2.67.0",
-    "ware": "^1.3.0",
-    "ws": "^1.0.1"
+    "request": "^2.67.0"
   },
   "devDependencies": {
     "jscs": "^2.7.0",
-    "mocha": "^2.4.5",
-    "should": "^8.0.2",
-    "winston": "^2.1.1"
+    "mocha": "^2.4.5"
   },
   "scripts": {
     "test": "mocha tests/*.js"
