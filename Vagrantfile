@@ -21,6 +21,6 @@ $provision = <<SCRIPT
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "centos/7"
+  config.vm.box = "bento/centos-7.2"
   config.vm.provision "shell", inline: $provision
 end

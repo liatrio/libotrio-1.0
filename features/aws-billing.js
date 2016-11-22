@@ -25,6 +25,13 @@ function getEstimatedCharges(startTime, endTime) {
   });
 }
 
+function estimatePreviousMonthCharges() {
+  var today = new Date();
+  var firstOfPrevMonth = new Date(today.getFullYear(), today.getMonth()-1, 1);
+  var lastOfPrevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+  return getEstimatedCharges(firstOfPrevMonth, lastOfPrevMonth);
+}
+
 // Returns the estimated month-to-date charges accross all services
 function estimateMonthToDateCharges() {
   var today = new Date();
@@ -33,7 +40,7 @@ function estimateMonthToDateCharges() {
 }
 
 // Forcast charges for this month
-function forecastCharges() {
+function estimateForecastCharges() {
   var today = new Date();
   var firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   var lastOfMonth = new Date(today.getFullYear(), today.getMonth()+1, 0);
@@ -43,8 +50,25 @@ function forecastCharges() {
   });
 }
 
-forecastCharges().then(function(charges) {
-  console.log(charges);
-}).catch(function(err) {
-  console.log(err, err.stack);
+// asynchronously generate report with previous-month, month-to-date, and
+// forecast charges.
+function generateBillingReport() {
+  report = {};
+  return Promise.all([
+    estimatePreviousMonthCharges().then(function(charges) {
+      report.previousMonthCharges = charges;
+    }),
+    estimateMonthToDateCharges().then(function(charges) {
+      report.monthToDateCharges= charges;
+    }),
+    estimateForecastCharges().then(function(charges) {
+      report.forecastCharges = charges;
+    })
+  ]).then(function() {
+    return report;
+  });
+}
+
+generateBillingReport().then(function(report) {
+  console.log(report);
 });
