@@ -7,7 +7,7 @@ AWS.config.update({
 });
 var cloudwatch = new AWS.CloudWatch();
 
-// Retrieves the estimated amount charged between startTime and endTime
+// Returns promise for the estimated amount charged between startTime and endTime
 function getEstimatedCharges(startTime, endTime) {
   var params = {
     MetricName: 'EstimatedCharges',
@@ -25,6 +25,7 @@ function getEstimatedCharges(startTime, endTime) {
   });
 }
 
+// Returns promise for the estimated prevous-month charges accross all services.
 function estimatePreviousMonthCharges() {
   var today = new Date();
   var firstOfPrevMonth = new Date(today.getFullYear(), today.getMonth()-1, 1);
@@ -32,14 +33,15 @@ function estimatePreviousMonthCharges() {
   return getEstimatedCharges(firstOfPrevMonth, lastOfPrevMonth);
 }
 
-// Returns the estimated month-to-date charges accross all services
+// Returns promise for the estimated month-to-date charges accross all services.
 function estimateMonthToDateCharges() {
   var today = new Date();
   var firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   return getEstimatedCharges(firstOfMonth, today);
 }
 
-// Forcast charges for this month
+// Returns promise for the estimated forecast of charges accross all services
+// for this month.
 function estimateForecastCharges() {
   var today = new Date();
   var firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -69,6 +71,43 @@ function generateBillingReport() {
   });
 }
 
-generateBillingReport().then(function(report) {
-  console.log(report);
-});
+// Installs aws-billing feature to bot
+function awsBilling(bot, controller) {
+
+  controller.hears(['aws billing'], 'direct_message,direct_mention', function(bot, message) {
+    generateBillingReport().then(function(report) {
+      bot.reply(message, {
+        attachments: [
+          {
+            color: '#36a64f',
+            title: 'AWS Billing Summary',
+            title_link: 'https://console.aws.amazon.com/billing/home?region=us-west-2',
+            fields: [
+              {
+                title: 'Previous Month Charges',
+                value: '$' + report.previousMonthCharges.toFixed(2),
+                short: true,
+              },
+              {
+                title: 'Month-To-Date Charges',
+                value: '$' + report.monthToDateCharges.toFixed(2),
+                short: true,
+              },
+              {
+                title: 'Forecast Charges For This Month',
+                value: '$' + report.forecastCharges.toFixed(2),
+                short: true,
+              },
+            ],
+            fallback: 'Previous Month: $' + report.previousMonthCharges.toFixed(2) +
+                ', Month-To-Date: $' + report.monthToDateCharges.toFixed(2) +
+                ', Forecast For This Month: $' + report.forecastCharges.toFixed(2),
+          }
+        ]
+      });
+    });
+  });
+
+}
+
+module.exports = awsBilling;
