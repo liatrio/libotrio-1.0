@@ -106,8 +106,10 @@ require('./features/saveit')(bot, controller);
 require('./features/shutdown')(bot, controller);
 require('./features/whoami')(bot, controller);
 require('./features/promote')(bot, controller);
+require('./features/aws-billing')(bot, controller);
 
 // Announce version to #libotrio-dev
+/*
 bot.sendWebhook({
   text: 'Hello World! I am running Libotrio v' + config.version + '.',
   channel: '#libotrio-dev',
@@ -118,8 +120,8 @@ bot.sendWebhook({
 // Register shutdown message to #libotrio-dev
 process.on('SIGTERM', function() {
   bot.sendWebhook({
-    text: 'Restarting to apply updates. Check ' + 
-    '<https://dashboard.heroku.com/pipelines/c6373f4b-dd80-4c94-abb9-aeb4ce12a7ab|Heroku> ' + 
+    text: 'Restarting to apply updates. Check ' +
+    '<https://dashboard.heroku.com/pipelines/c6373f4b-dd80-4c94-abb9-aeb4ce12a7ab|Heroku> ' +
     'if anything goes wrong. See you on the other side!',
     channel: 'libotrio-dev',
   }, function(err, res) {
@@ -128,6 +130,6 @@ process.on('SIGTERM', function() {
     process.exit(0);
   });
 });
+*/
 
 bot.startRTM();
-

@@ -25,7 +25,7 @@ function getEstimatedCharges(startTime, endTime) {
   });
 }
 
-// Returns promise for the estimated prevous-month charges accross all services.
+// Returns promise for the estimated previous-month charges across all services.
 function estimatePreviousMonthCharges() {
   var today = new Date();
   var firstOfPrevMonth = new Date(today.getFullYear(), today.getMonth()-1, 1);
@@ -33,14 +33,14 @@ function estimatePreviousMonthCharges() {
   return getEstimatedCharges(firstOfPrevMonth, lastOfPrevMonth);
 }
 
-// Returns promise for the estimated month-to-date charges accross all services.
+// Returns promise for the estimated month-to-date charges across all services.
 function estimateMonthToDateCharges() {
   var today = new Date();
   var firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   return getEstimatedCharges(firstOfMonth, today);
 }
 
-// Returns promise for the estimated forecast of charges accross all services
+// Returns promise for the estimated forecast of charges across all services
 // for this month.
 function estimateForecastCharges() {
   var today = new Date();
@@ -52,7 +52,7 @@ function estimateForecastCharges() {
   });
 }
 
-// asynchronously generate report with previous-month, month-to-date, and
+// Asynchronously generate report with previous-month, month-to-date, and
 // forecast charges.
 function generateBillingReport() {
   report = {};
