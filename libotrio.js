@@ -106,5 +106,6 @@ require('./features/saveit')(bot, controller);
 require('./features/shutdown')(bot, controller);
 require('./features/whoami')(bot, controller);
 require('./features/promote')(bot, controller);
+require('./features/echo')(bot, controller);
 
 bot.startRTM();
