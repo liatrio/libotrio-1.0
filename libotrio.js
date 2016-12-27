@@ -74,6 +74,7 @@ var redis = require('./lib/storage/redis_storage');
 var url = require('url');
 var request = require('request');
 var config = require('./package');
+var featureToggles = require('./feature-toggles');
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 console.log(redisURL);
@@ -98,14 +99,10 @@ var bot = controller.spawn({
 });
 
 // Install features
-require('./features/about')(bot, controller);
-require('./features/beerjar')(bot, controller);
-require('./features/greet')(bot, controller);
-require('./features/nickname')(bot, controller);
-require('./features/saveit')(bot, controller);
-require('./features/shutdown')(bot, controller);
-require('./features/whoami')(bot, controller);
-require('./features/promote')(bot, controller);
-require('./features/echo')(bot, controller);
+for (var feature in featureToggles) {
+  if (featureToggles[feature]) {
+    require(`./features/${feature}`)(bot, controller);
+  }
+}
 
 bot.startRTM();
