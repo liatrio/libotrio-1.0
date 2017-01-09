@@ -6,6 +6,7 @@ module.exports = {
   'echo': true,
   'greet': true,
   'help': true,
+  'jira': true,
   'nickname': true,
   'promote': !!process.env.JENKINS_API_KEY,
   'saveit': true,
