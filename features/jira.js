@@ -89,7 +89,7 @@ module.exports = function(bot, controller) {
     async.map(keys, getIssue, (error, issues) => {
       if (error) {
         console.error(error);
-        exit(1);
+        return; 
       }
       // Filter out non-existent issues
       let matchedIssues = issues.filter((issue) => !('errorMessages' in issue));
