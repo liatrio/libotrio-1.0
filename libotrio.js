@@ -65,71 +65,44 @@ This bot demonstrates many of the core features of Botkit:
 
 
 if (!process.env.token) {
-    console.log('Error: Specify token in environment');
-    process.exit(1);
+  console.log('Error: Specify token in environment');
+  process.exit(1);
 }
 
 var Botkit = require('./lib/Botkit.js');
 var redis = require('./lib/storage/redis_storage');
 var url = require('url');
-var request = require('request')
-var config = require('./package')
+var request = require('request');
+var config = require('./package');
+var featureToggles = require('./feature-toggles');
 
 var redisURL = url.parse(process.env.REDISCLOUD_URL);
 console.log(redisURL);
 
 var redisStorage = redis({
-    namespace: 'libotrio',
-    host: redisURL.hostname,
-    port: redisURL.port,
-    auth_pass: redisURL.auth.split(":")[1]
+  namespace: 'libotrio',
+  host: redisURL.hostname,
+  port: redisURL.port,
+  auth_pass: redisURL.auth.split(":")[1]
 });
 
 var controller = Botkit.slackbot({
-    storage: redisStorage,
-    debug: false
+  storage: redisStorage,
+  debug: false
 });
 
 var bot = controller.spawn({
-    token: process.env.token,
-    incoming_webhook: {
-      url: process.env.webhookurl
-    }
-})
+  token: process.env.token,
+  incoming_webhook: {
+    url: process.env.webhookurl
+  }
+});
 
 // Install features
-require('./features/about')(bot, controller);
-require('./features/beerjar')(bot, controller);
-require('./features/greet')(bot, controller);
-require('./features/nickname')(bot, controller);
-require('./features/saveit')(bot, controller);
-require('./features/shutdown')(bot, controller);
-require('./features/whoami')(bot, controller);
-require('./features/promote')(bot, controller);
-require('./features/aws-billing')(bot, controller);
-
-// Announce version to #libotrio-dev
-/*
-bot.sendWebhook({
-  text: 'Hello World! I am running Libotrio v' + config.version + '.',
-  channel: '#libotrio-dev',
-}, function(err, res) {
-  console.log(err, res);
-});
-
-// Register shutdown message to #libotrio-dev
-process.on('SIGTERM', function() {
-  bot.sendWebhook({
-    text: 'Restarting to apply updates. Check ' +
-    '<https://dashboard.heroku.com/pipelines/c6373f4b-dd80-4c94-abb9-aeb4ce12a7ab|Heroku> ' +
-    'if anything goes wrong. See you on the other side!',
-    channel: 'libotrio-dev',
-  }, function(err, res) {
-    console.log('callback called');
-    bot.destroy()
-    process.exit(0);
-  });
-});
-*/
+for (var feature in featureToggles) {
+  if (featureToggles[feature]) {
+    require(`./features/${feature}`)(bot, controller);
+  }
+}
 
 bot.startRTM();
