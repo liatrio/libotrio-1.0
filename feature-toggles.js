@@ -9,8 +9,7 @@ module.exports = {
   'jira': !!process.env.JIRA_USER,
   'nickname': true,
   'promote': !!process.env.JENKINS_API_KEY,
-  'saveit': true,
+  'saveit': !!process.env.JIRA_USER,
   'shutdown': true,
   'whoami': true,
 };
-
