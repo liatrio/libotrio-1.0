@@ -2,6 +2,7 @@
 
 module.exports = {
   'about': true,
+  'aws-billing': !!process.env.AWS_ACCESS_KEY_ID,
   'beerjar': true,
   'echo': true,
   'greet': true,

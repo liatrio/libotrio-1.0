@@ -4,6 +4,7 @@
   "description": "Liatrio SlackBot",
   "main": "lib/Botkit.js",
   "dependencies": {
+    "aws-sdk": "^2.7.6",
     "async": "^2.1.4",
     "back": "^1.0.1",
     "body-parser": "^1.14.2",

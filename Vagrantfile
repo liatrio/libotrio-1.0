@@ -12,7 +12,7 @@ $provision = <<SCRIPT
   yum install -y redis
   systemctl start redis.service
   # Install Node/npm
-  curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
+  curl --silent --location https://rpm.nodesource.com/setup_7.x | bash -
   yum install -y nodejs
   # Set environment variables
   echo 'REDISCLOUD_URL=redis://libotrio:libotrio@localhost:6379' >> /etc/environment
@@ -21,6 +21,6 @@ $provision = <<SCRIPT
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "centos/7"
+  config.vm.box = "bento/centos-7.2"
   config.vm.provision "shell", inline: $provision
 end
