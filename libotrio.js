@@ -63,12 +63,6 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
-if (!process.env.token) {
-  console.log('Error: Specify token in environment');
-  process.exit(1);
-}
-
 var Botkit = require('./lib/Botkit.js');
 var redis = require('./lib/storage/redis_storage');
 var url = require('url');
@@ -76,8 +70,20 @@ var request = require('request');
 var config = require('./package');
 var featureToggles = require('./feature-toggles');
 
-var redisURL = url.parse(process.env.REDISCLOUD_URL);
+if (!process.env.SLACK_ACCESS_TOKEN) {
+  console.log('Error: Specify SLACK_ACCESS_TOKEN in environment');
+  process.exit(1);
+}
+
+if (!process.env.REDIS_URL) {
+  console.log('Error: Specify REDIS_URL in environment');
+  process.exit(1);
+}
+
+var redisURL = url.parse(process.env.REDIS_URL);
+console.log('###############')
 console.log(redisURL);
+console.log('###############')
 
 var redisStorage = redis({
   namespace: 'libotrio',
@@ -92,9 +98,9 @@ var controller = Botkit.slackbot({
 });
 
 var bot = controller.spawn({
-  token: process.env.token,
+  token: process.env.SLACK_ACCESS_TOKEN,
   incoming_webhook: {
-    url: process.env.webhookurl
+    url: process.env.SLACK_WEBHOOK_URL
   }
 });
 
