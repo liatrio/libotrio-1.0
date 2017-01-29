@@ -13,4 +13,5 @@ module.exports = {
   'saveit': !!process.env.JIRA_USER,
   'shutdown': true,
   'whoami': true,
+  'yt-search': !!process.env.GOOGLE_API_KEY,
 };

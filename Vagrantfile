@@ -23,4 +23,10 @@ SCRIPT
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/centos-7.2"
   config.vm.provision "shell", inline: $provision
+  # Fix for "SSH auth method" hangups
+  config.vm.provider :virtualbox do |v|
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ['modifyvm', :id, '--cableconnected1', 'on']
+    v.customize ['modifyvm', :id, '--cableconnected2', 'on']
+  end
 end
