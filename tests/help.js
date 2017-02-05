@@ -1,9 +1,9 @@
 const assert = require('assert');
 const botMock = require('./mocks/botMock');
 const SimpleStorage = require('./storage/SimpleStorage');
-const aboutFeature = require('../features/about').feature;
+const helpFeature = require('../features/help').feature;
 
-describe('about tests', () => {
+describe('help tests', () => {
 
   beforeEach((done) => {
     var self = this;
@@ -19,23 +19,27 @@ describe('about tests', () => {
     self.controller.bot.identity = {name: 'testName'};
 
     // Install feature
-    aboutFeature(self.controller.bot, self.controller);
+    helpFeature(self.controller.bot, self.controller);
 
     done();
   });
 
-  it('should respond with uptime message when prompted', (done) => {
+  it('should respond with help attachment', (done) => {
     var self = this;
     return self.controller.usersInput([
       {
         first: true,
         user: self.slackId,
-        messages: [{text: 'uptime', isAssertion: true}]
+        messages: [{text: 'help', isAssertion: true}]
       }
     ]).then((text) => {
-      assert.equal(text.startsWith(':robot_face: I am Libotrio'), true);
+      // assert.equal(text.startsWith(':robot_face: I am Libotrio'), true);
+      let attachments = text.attachments;
+      assert.equal(attachments.length, 1);
+      assert.equal(attachments[0].title, 'Libotrio Features');
+      assert('fields' in attachments[0]);
       done();
     });
   });
-
+  
 });

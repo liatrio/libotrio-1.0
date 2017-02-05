@@ -4,11 +4,6 @@ const request = require('request');
 const confluenceUser = process.env.JIRA_USER;
 const confluencePass = process.env.JIRA_PASS;
 
-if (!confluenceUser || !confluencePass) {
-  console.error('ERR: The Confluence attachement save feature requires JIRA_USER and JIRA_PASS envars.');
-  exit(1);
-}
-
 var config = {
     username: confluenceUser,
     password: confluencePass,
@@ -16,9 +11,14 @@ var config = {
     //version: 4 // Confluence major version, optional
 };
 
-var confluence = new Confluence(config);
+function saveit(bot, controller) {
+  if (!confluenceUser || !confluencePass) {
+    console.error('ERR: The Confluence attachement save feature requires JIRA_USER and JIRA_PASS envars.');
+    return;
+  }
 
-module.exports = function(bot, controller) {
+  var confluence = new Confluence(config);
+
   controller.hears(['save to confluence', 'saveit', 'save it'], 'direct_message,direct_mention,mention', function(bot, message) {
     var found = false;
     var space = "LIATRIO"; //The Space key - required for the rest api.
@@ -81,4 +81,14 @@ module.exports = function(bot, controller) {
         }
       });
     });
-  };
+  }
+
+function helpMessage(bot, controller) {
+  return `Saves the last file within the previous 5 messages to Confluence.
+\`@${bot.identity.name} saveit\``;
+}
+
+module.exports = {
+  feature: saveit,
+  helpMessage,
+};

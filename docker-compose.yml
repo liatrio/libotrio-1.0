@@ -1,0 +1,19 @@
+version: '2'
+services:
+  redis:
+    image: "redis:alpine"
+  bot:
+    build: .
+    volumes:
+      - .:/code
+    command: bash -c "npm test && node libotrio.js"
+    environment:
+      - REDIS_URL=redis://bogus:bogus@redis:6379
+      - SLACK_ACCESS_TOKEN
+      - SLACK_WEBHOOK_URL
+      - ATLASSIAN_USER
+      - ATLASSIAN_PASS
+      - JENKINS_API_KEY
+      - GOOGLE_API_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY

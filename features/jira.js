@@ -7,13 +7,8 @@ const jiraApiUrl = 'https://liatrio.atlassian.net/rest/api/2';
 const jiraUser = process.env.JIRA_USER;
 const jiraPass = process.env.JIRA_PASS;
 
-if (!jiraUser || !jiraPass) {
-  console.error('ERR: Jira feature requires JIRA_USER and JIRA_PASS envars.');
-  exit(1);
-}
-
 // Queries the Jira REST api with with the given endpoint, method, and body.
-// Invokes cb function on completion with `error`, `response`, and `body` 
+// Invokes cb function on completion with `error`, `response`, and `body`
 // parameters.
 function queryJira({method, endpoint, body}, cb) {
   return request({
@@ -43,7 +38,6 @@ function getIssue(key, cb) {
 // Builds a slack message attachment for the given issue
 // (returned form `getIssue`).
 function buildIssueAttachment(issue) {
-  // Format creation date
   let ticketLink = `https://liatrio.atlassian.net/browse/${issue.key}`;
   let created = new Date(issue.fields.created);
   let formattedCreated = `${created.getMonth()+1}/${created.getDate()}/${created.getFullYear()}`;
@@ -81,17 +75,19 @@ function buildIssueAttachment(issue) {
   };
 }
 
-module.exports = function(bot, controller) {
+function jira(bot, controller) {
+  if (!jiraUser || !jiraPass) {
+    console.error('ERR: Jira feature requires JIRA_USER and JIRA_PASS envars.');
+    return;
+  }
+
   controller.hears(['([a-zA-Z]+-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
-    // Match all ticket keys and map them to upper case
-    let keys = message.text.match(/([A-Z]+-[0-9]+)/gi).map((m) => m.toUpperCase());
-    // Query Jira REST api for each matched issue key
-    async.map(keys, getIssue, (error, issues) => {
+    let ticketKeys = message.text.match(/([A-Z]+-[0-9]+)/gi).map((m) => m.toUpperCase());
+    async.map(ticketKeys, getIssue, (error, issues) => {
       if (error) {
         console.error(error);
-        return; 
+        return;
       }
-      // Filter out non-existent issues
       let matchedIssues = issues.filter((issue) => !('errorMessages' in issue));
       let attachments = matchedIssues.map(buildIssueAttachment);
       if (attachments) {
@@ -99,5 +95,14 @@ module.exports = function(bot, controller) {
       }
     });
   });
-};
+}
 
+function helpMessage(bot, controller) {
+  return `Look up and display Jira ticket details.
+Include a ticket key (such as \`LIB-3\`) in your slack message.`;
+}
+
+module.exports = {
+  feature: jira,
+  helpMessage,
+};

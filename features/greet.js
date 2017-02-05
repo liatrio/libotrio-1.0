@@ -1,4 +1,4 @@
-module.exports = function(bot, controller) {
+function greet(bot, controller) {
 
   controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
 
@@ -22,4 +22,14 @@ module.exports = function(bot, controller) {
 
   });
 
+}
+
+function helpMessage(bot, controller) {
+  return `Say hello to Libotrio!
+\`@${bot.identity.name} hello\``;
+}
+
+module.exports = {
+  feature: greet,
+  helpMessage,
 };

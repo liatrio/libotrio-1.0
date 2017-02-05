@@ -1,4 +1,4 @@
-module.exports = function(bot, controller) {
+function whoami(bot, controller) {
 
   controller.hears(['what is my name', 'who am i'], 'direct_message,direct_mention,mention', function(bot, message) {
 
@@ -68,4 +68,14 @@ module.exports = function(bot, controller) {
     });
   });
 
+}
+
+function helpMessage(bot, controller) {
+  return `Figure out what Libotrio calls you.
+  \`@${bot.identity.name} whoami\``;
+}
+
+module.exports = {
+  feature: whoami,
+  helpMessage,
 };
