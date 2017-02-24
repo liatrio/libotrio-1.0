@@ -4,8 +4,13 @@ const request = require('request');
 const async = require('async');
 
 const jiraApiUrl = 'https://liatrio.atlassian.net/rest/api/2';
-const jiraUser = process.env.JIRA_USER;
-const jiraPass = process.env.JIRA_PASS;
+const atlassianUser = process.env.ATLASSIAN_USER;
+const atlassianPass = process.env.ATLASSIAN_PASS;
+
+if (!atlassianUser || !atlassianPass) {
+  console.error('ERR: Jira feature requires JIRA_USER and JIRA_PASS envars.');
+  exit(1);
+}
 
 // Queries the Jira REST api with with the given endpoint, method, and body.
 // Invokes cb function on completion with `error`, `response`, and `body`
@@ -17,8 +22,8 @@ function queryJira({method, endpoint, body}, cb) {
     body: body,
     json: true,
     auth: {
-      user: jiraUser,
-      pass: jiraPass,
+      user: atlassianUser,
+      pass: atlassianPass,
     },
   }, cb);
 }

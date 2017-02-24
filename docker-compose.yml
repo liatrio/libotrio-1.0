@@ -6,7 +6,6 @@ services:
     build: .
     volumes:
       - .:/code
-    command: bash -c "npm test && node libotrio.js"
     environment:
       - REDIS_URL=redis://bogus:bogus@redis:6379
       - SLACK_ACCESS_TOKEN

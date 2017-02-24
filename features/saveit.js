@@ -1,12 +1,17 @@
 var Confluence = require("confluence-api");
 const request = require('request');
 
-const confluenceUser = process.env.JIRA_USER;
-const confluencePass = process.env.JIRA_PASS;
+const atlassianUser = process.env.ATLASSIAN_USER;
+const atlassianPass = process.env.ATLASSIAN_PASS;
+
+if (!atlassianUser || !atlassianPass) {
+  console.error('ERR: The Confluence attachement save feature requires ATLASSIAN_USER and ATLASSIAN_PASS envars.');
+  exit(1);
+}
 
 var config = {
-    username: confluenceUser,
-    password: confluencePass,
+    username: atlassianUser,
+    password: atlassianPass,
     baseUrl:  "https://liatrio.atlassian.net/wiki"
     //version: 4 // Confluence major version, optional
 };
@@ -47,7 +52,7 @@ function saveit(bot, controller) {
               //Download the file with the bearer token
               var file = request.get(obj.file.url_private, {
                 'auth': {
-                  'bearer': process.env.token
+                  'bearer': process.env.SLACK_ACCESS_TOKEN
                 }
               });
 

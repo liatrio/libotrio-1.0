@@ -10,10 +10,11 @@ module.exports = {
   'beerjar': true,
   'echo': true,
   'greet': true,
-  'jira': !!process.env.JIRA_USER,
+  'jira': !!process.env.ATLASSIAN_USER,
   'nickname': true,
   'promote': !!process.env.JENKINS_API_KEY,
-  'saveit': !!process.env.JIRA_USER,
+  'saveit': !!process.env.ATLASSIAN_USER,
   'shutdown': true,
   'whoami': true,
+  'yt-search': !!process.env.GOOGLE_API_KEY,
 };
