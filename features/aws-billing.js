@@ -110,4 +110,13 @@ function awsBilling(bot, controller) {
 
 }
 
-module.exports = awsBilling;
+
+function helpMessage(bot, controller) {
+  return `Genereates a billing summary for AWS.
+\`@${bot.identity.name} aws billing\``;
+}
+
+module.exports = {
+  feature: awsBilling,
+  helpMessage,
+};

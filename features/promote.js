@@ -4,7 +4,12 @@ var os = require('os');
 var config = require('../package');
 var request = require('request');
 
-module.exports = function(bot, controller) {
+function promote(bot, controller) {
+
+  if (!process.env.JENKINS_API_KEY) {
+    console.error('JENKINS_API_KEY environment variable requires for promote features.');
+    return;
+  }
 
   var jobTriggerUrl = 'https://admin:' + process.env.JENKINS_API_KEY + '@build.liatrio.com/job/Libotrio/job/libotrio-deploy-production/build?token=libotrio-production-deploy';
   console.log(jobTriggerUrl);
@@ -26,4 +31,14 @@ module.exports = function(bot, controller) {
     });
 
   });
+}
+
+function helpMessage(bot, controller) {
+  return `Promote Libotrio version in staging to production.
+\`@${bot.identity.name} promote to prod\``;
+}
+
+module.exports = {
+  feature: promote,
+  helpMessage,
 };

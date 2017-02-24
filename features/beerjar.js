@@ -1,4 +1,4 @@
-module.exports = function(bot, controller) {
+function beerjar(bot, controller) {
 
   controller.hears(['beerjar help'], 'direct_message,direct_mention,mention', function(bot, message) {
     var text = '_beerjar_ commands are as follows: \n';
@@ -118,4 +118,19 @@ module.exports = function(bot, controller) {
 
   });
 
+}
+
+function helpMessage(bot, controller) {
+  return `Liatrio company beerjar.
+\`@${bot.identity.name} beerjar bump @user\` - Adds $1 to @user beerjar.
+\`@${bot.identity.name} beerjar me\` - Adds $1 to your beerjar.
+\`@${bot.identity.name} beerjar balance\` - Shows your beerjar balance.
+\`@${bot.identity.name} beerjar totals\` - Shows running totals for every user.
+\`@${bot.identity.name} beerjar add\` - Add any amount to your own beerjar.
+\`@${bot.identity.name} beerjar clear\` - Empties your beerjar.`;
+}
+
+module.exports = {
+  feature: beerjar,
+  helpMessage,
 };

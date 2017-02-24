@@ -1,7 +1,7 @@
 var os = require('os');
 var config = require('../package');
 
-module.exports = function(bot, controller) {
+function about(bot, controller) {
 
   function formatUptime(uptime) {
     var unit = 'second';
@@ -30,6 +30,16 @@ module.exports = function(bot, controller) {
     bot.reply(message,
       ':robot_face: I am Libotrio v' + config.version +
       '. I have been running for ' + uptime + ' on ' + hostname + '.');
-    });
+  });
 
-  };
+}
+
+function helpMessage(bot, controller) {
+  return `Gives uptime and version info of the Libotrio process
+\`@${bot.identity.name} about\``;
+}
+
+module.exports = {
+  feature: about,
+  helpMessage,
+};
