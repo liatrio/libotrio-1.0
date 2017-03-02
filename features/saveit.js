@@ -17,10 +17,6 @@ var config = {
 };
 
 function saveit(bot, controller) {
-  if (!confluenceUser || !confluencePass) {
-    console.error('ERR: The Confluence attachement save feature requires JIRA_USER and JIRA_PASS envars.');
-    return;
-  }
 
   var confluence = new Confluence(config);
 

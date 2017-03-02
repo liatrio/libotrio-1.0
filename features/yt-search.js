@@ -8,7 +8,7 @@ if (!process.env.GOOGLE_API_KEY) {
   process.exit(1);
 }
 
-module.exports = function(bot, controller) {
+function ytSearch(bot, controller) {
   controller.hears(['yt (.*)'], ['direct_message', 'mention', 'direction_mention', 'ambient'], function(bot, message) {
     let params = {
       auth: process.env.GOOGLE_API_KEY,
@@ -30,3 +30,12 @@ module.exports = function(bot, controller) {
   });
 };
 
+function helpMessage(bot, controller) {
+    return `Search for a video on youtube
+\`yt cute kitties\``;
+}
+
+module.exports = {
+  feature: ytSearch,
+  helpMessage,
+};
