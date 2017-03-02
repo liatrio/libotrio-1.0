@@ -81,11 +81,6 @@ function buildIssueAttachment(issue) {
 }
 
 function jira(bot, controller) {
-  if (!jiraUser || !jiraPass) {
-    console.error('ERR: Jira feature requires JIRA_USER and JIRA_PASS envars.');
-    return;
-  }
-
   controller.hears(['([a-zA-Z]+-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
     let ticketKeys = message.text.match(/([A-Z]+-[0-9]+)/gi).map((m) => m.toUpperCase());
     async.map(ticketKeys, getIssue, (error, issues) => {
