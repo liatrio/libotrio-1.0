@@ -16,40 +16,10 @@ AWS.config.update({
 
 var ec2 = new AWS.EC2();
 
-// const states = {
-//   0: "pending",
-//   16: "running",
-//   32: "shutting-down",
-//   48: "terminated",
-//   64: "stopping",
-//   80: "stopped",
-// }
+function getEc2Instances(cb) {
 
-
-// function findImage(amiId){
-//   switch (amiId) {
-//     case "ami-d0f506b0":
-//       return "Amazon Linux";
-//       break;
-//     case "ami-d2c924b2":
-//       return "Centos 7";
-//       break;
-//     case "ami-5ec1673e":
-//       return "Amazon Linux";
-//       break;
-//     default: "other"
-//   }
-// }
-
-
-// function prettifyIp(publicIP){
-//   if(!publicIP){
-//       return "no.ip.defined";
-//   }
-//   return publicIP;
-// }
-
-function queryEc2(){
+  let runningInstances = [];
+  let stoppedInstances = [];
 
   ec2.describeInstances(function(err, result){
     if(err)
@@ -74,45 +44,46 @@ function queryEc2(){
           }
         }
       }
+      cb(runningInstances, stoppedInstances);
   });
 }
 
-var runningInstances = new Array();
 
-var stoppedInstances = new Array();
-
-module.exports = function(bot, controller) {
-
+function ec2List(bot, controller) {
 
   controller.hears(['ec2 list'], 'direct_message,direct_mention,mention', function(bot, message) {
 
-    queryEc2();
-    stoppedInstances = [];
-    runningInstances = [];
-    
-    queryEc2();
-    
-    bot.reply(message, {
-      attachments: [
-        {
-          color: '#fe9b28',
-          pretext: `Current ec2 information for ${currentRegion} region`,
-          fields: [
-            {
-              'title': 'Running',
-              'value': runningInstances.join('\n'),
-              'short': true,
-            },
-            {
-              'title': 'Stopped',
-              'value': stoppedInstances.join('\n'),
-              'short': true,
-            }
-          ],
-        }
-      ],
+    getEc2Instances(function(runningInstances, stoppedInstances){
+      bot.reply(message, {
+        attachments: [
+          {
+            color: '#fe9b28',
+            pretext: `Current ec2 information for ${currentRegion} region`,
+            fields: [
+              {
+                'title': 'Running',
+                'value': runningInstances.join('\n'),
+                'short': true,
+              },
+              {
+                'title': 'Stopped',
+                'value': stoppedInstances.join('\n'),
+                'short': true,
+              }
+            ],
+          }
+        ],
+      });
     });
-    stoppedInstances = [];
-    runningInstances = [];
   });
+}
+
+function helpMessage(bot, controller) {
+  return `Lists the current ec2 instances.
+\`@${bot.identity.name} ec2 list\``;
+}
+
+module.exports = {
+  feature: ec2List,
+  helpMessage
 }

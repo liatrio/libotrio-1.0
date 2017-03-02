@@ -14,4 +14,5 @@ module.exports = {
   'shutdown': true,
   'whoami': true,
   'yt-search': !!process.env.GOOGLE_API_KEY,
+  'ec2-list': !!process.env.AWS_ACCESS_KEY_ID,
 };
