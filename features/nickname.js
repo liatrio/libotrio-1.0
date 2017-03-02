@@ -1,4 +1,4 @@
-module.exports = function(bot, controller) {
+function nickname(bot, controller) {
 
   controller.hears(['call me (.*)', 'my name is (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
     var name = message.match[1];
@@ -15,4 +15,14 @@ module.exports = function(bot, controller) {
     });
   });
 
+}
+
+function helpMessage(bot, controller) {
+  return `Tell libotrio what to call you.
+\`@${bot.identity.name} call me <nickname>\``;
+}
+
+module.exports = {
+  feature: nickname,
+  helpMessage,
 };

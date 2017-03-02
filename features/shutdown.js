@@ -1,4 +1,4 @@
-module.exports = function(bot, controller) {
+function shutdown(bot, controller) {
 
   controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function(bot, message) {
     bot.startConversation(message, function(err, convo) {
@@ -25,4 +25,14 @@ module.exports = function(bot, controller) {
     });
   });
 
+}
+
+function helpMessage(bot, controller) {
+  return `causes the Libotrio process to exit.
+\`@${bot.identity.name} shutdown\``;
+}
+
+module.exports = {
+  feature: shutdown,
+  helpMessage,
 };
