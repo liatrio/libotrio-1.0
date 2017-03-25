@@ -8,7 +8,7 @@ const atlassianUser = process.env.ATLASSIAN_USER;
 const atlassianPass = process.env.ATLASSIAN_PASS;
 
 if (!atlassianUser || !atlassianPass) {
-  console.error('ERR: Jira feature requires JIRA_USER and JIRA_PASS envars.');
+  console.error('ERR: Jira feature requires ATLASSIAN_USER and ATLASSIAN_PASS envars.');
   exit(1);
 }
 
@@ -46,6 +46,12 @@ function buildIssueAttachment(issue) {
   let ticketLink = `https://liatrio.atlassian.net/browse/${issue.key}`;
   let created = new Date(issue.fields.created);
   let formattedCreated = `${created.getMonth()+1}/${created.getDate()}/${created.getFullYear()}`;
+
+  issue.fields.summary = issue.fields.summary || 'N/A'
+  issue.fields.status = issue.fields.status || 'N/A'
+  issue.fields.reporter = issue.fields.reporter || { name: 'N/A' }
+  issue.fields.assignee = issue.fields.assignee || { name: 'N/A' }
+
   return {
     color: '#36a64f',
     title: issue.key,
@@ -81,6 +87,11 @@ function buildIssueAttachment(issue) {
 }
 
 function jira(bot, controller) {
+  if (!(atlassianUser && atlassianPass)) { 
+    console.error('ERR: Jira feature requires ATLASSIAN_USER and ATLASSIAN_PASS envars.');
+    return;
+  }
+
   controller.hears(['([a-zA-Z]+-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
     let ticketKeys = message.text.match(/([A-Z]+-[0-9]+)/gi).map((m) => m.toUpperCase());
     async.map(ticketKeys, getIssue, (error, issues) => {
@@ -106,3 +117,4 @@ module.exports = {
   feature: jira,
   helpMessage,
 };
+
