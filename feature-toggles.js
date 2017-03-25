@@ -12,7 +12,7 @@ module.exports = {
   'greet': true,
   'jira': !!process.env.ATLASSIAN_USER,
   'nickname': true,
-  'promote': !!process.env.JENKINS_API_KEY,
+  'promote': !!process.env.JENKINS_USER,
   'saveit': !!process.env.ATLASSIAN_USER,
   'shutdown': true,
   'whoami': true,
