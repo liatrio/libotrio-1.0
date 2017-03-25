@@ -10,9 +10,12 @@ services:
       - REDIS_URL=redis://bogus:bogus@redis:6379
       - SLACK_ACCESS_TOKEN
       - SLACK_WEBHOOK_URL
+      - JENKINS_USER
+      - JENKINS_API_TOKEN
+      - LIBOTRIO_DEPLOY_TRIGGER_URL
       - ATLASSIAN_USER
       - ATLASSIAN_PASS
-      - JENKINS_API_KEY
       - GOOGLE_API_KEY
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
+
