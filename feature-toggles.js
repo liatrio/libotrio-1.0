@@ -11,6 +11,7 @@ module.exports = {
   'echo': true,
   'greet': true,
   'jira': !!process.env.ATLASSIAN_USER,
+  'joke': true,
   'nickname': true,
   'promote': !!process.env.JENKINS_USER,
   'saveit': !!process.env.ATLASSIAN_USER,
