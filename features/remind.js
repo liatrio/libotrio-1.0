@@ -26,6 +26,12 @@ function remind(bot, controller) {
   });
 }
 
+function helpMessage(bot, controller) {
+  return `Set a reminder; Bot will message you after timeout period has elapsed.
+  \`@${bot.identity.name} remind <hours>:<minutes>:<seconds> <message>\``;
+}
+
 module.exports = {
-    feature: remind
+    feature: remind,
+    helpMessage,
 };
