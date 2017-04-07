@@ -17,4 +17,5 @@ module.exports = {
   'shutdown': true,
   'whoami': true,
   'yt-search': !!process.env.GOOGLE_API_KEY,
+  'remind': true,
 };
