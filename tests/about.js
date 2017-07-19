@@ -1,6 +1,6 @@
 const assert = require('assert');
 const botMock = require('./mocks/botMock');
-const SimpleStorage = require('./storage/SimpleStorage');
+const SimpleStorage = require('../lib/storage/simple_storage');
 const aboutFeature = require('../features/about').feature;
 
 describe('about tests', () => {
