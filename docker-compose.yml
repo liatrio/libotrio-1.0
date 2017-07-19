@@ -1,0 +1,21 @@
+version: '2'
+services:
+  redis:
+    image: "redis:alpine"
+  bot:
+    build: .
+    volumes:
+      - .:/code
+    environment:
+      - REDIS_URL=redis://bogus:bogus@redis:6379
+      - SLACK_ACCESS_TOKEN
+      - SLACK_WEBHOOK_URL
+      - JENKINS_USER
+      - JENKINS_API_TOKEN
+      - LIBOTRIO_DEPLOY_TRIGGER_URL
+      - ATLASSIAN_USER
+      - ATLASSIAN_PASS
+      - GOOGLE_API_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+
