@@ -4,7 +4,6 @@ services:
     image: "redis:alpine"
   bot:
     build: .
-    command: npm test
     volumes:
       - .:/code
     environment:
