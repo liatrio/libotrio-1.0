@@ -19,4 +19,5 @@ module.exports = {
   'whoami': true,
   'yt-search': !!process.env.GOOGLE_API_KEY,
   'remind': true,
+  'aws-list-instances': !!process.env.AWS_ACCESS_KEY_ID,
 };

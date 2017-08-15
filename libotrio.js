@@ -37,7 +37,7 @@ This bot demonstrates many of the core features of Botkit:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 var Botkit = require('./lib/Botkit.js');
-var redis = require('./lib/storage/redis_storage');
+var redis = require('./lib/storage/simple_storage.js');
 var url = require('url');
 var request = require('request');
 var config = require('./package');
