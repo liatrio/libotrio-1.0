@@ -4,7 +4,7 @@ services:
     image: "redis:alpine"
   bot:
     build: .
-    command: npm test
+    command: node libotrio.js
     volumes:
       - .:/code
     environment:
@@ -19,4 +19,3 @@ services:
       - GOOGLE_API_KEY
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
-
