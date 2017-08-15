@@ -39,6 +39,8 @@ function validateRegion(region) {
   return validRegions.includes(region);
 }
 
+//generates a report using the data from describeInstances and formats
+//it for readability in slack. Returns a slack message with attachments
 function generateInstanceReport(data, cb) {
 
   if (data.Reservations.length == 0) {
@@ -50,23 +52,23 @@ function generateInstanceReport(data, cb) {
 
   for (let i = 0; i < data.Reservations.length; i++){
     for (let j = 0; j < data.Reservations[i].Instances.length; j++) {
-      let block = "";
+      let instanceProperties = "";
       let name = "";
 
-      block += data.Reservations[i].Instances[j].InstanceType + "\n";
+      instanceProperties += data.Reservations[i].Instances[j].InstanceType + "\n";
 
       for (let k = 0; k < data.Reservations[i].Instances[j].Tags.length; k++) {
         if (data.Reservations[i].Instances[j].Tags[k].Key == 'Name') {
           name = data.Reservations[i].Instances[j].Tags[k].Value || "Untitled";
         }
       }
-      block += data.Reservations[i].Instances[j].PublicIpAddress + "\n";
-      block += data.Reservations[i].Instances[j].KeyName;
+      instanceProperties += data.Reservations[i].Instances[j].PublicIpAddress + "\n";
+      instanceProperties += data.Reservations[i].Instances[j].KeyName;
 
       attachments.push({
         title: name,
         color: (attachments.length % 2 ? '#64b6db' : '#ece1ce'),
-        text: '```' + block + '```',
+        text: '```' + instanceProperties + '```',
         mrkdwn_in: ['text']
       });
     }
@@ -84,13 +86,11 @@ function awsListInstances(bot, controller) {
     let region = ( text.length == 5 ? text[4] : defaultRegion );
 
     if (!validateStatus(status)) {
-      //send error message
       bot.reply(message, `Invalid status, please use a supported one instead`);
       return;
     }
 
     if (!validateRegion(region)) {
-      //send error message
       bot.reply(message, ':flag-kp: Invalid region specified');
       return;
     }
@@ -101,7 +101,6 @@ function awsListInstances(bot, controller) {
         {
           Name: 'instance-state-name',
           Values: [status],
-
         }
       ]
     };
@@ -117,7 +116,6 @@ function awsListInstances(bot, controller) {
       }
       else {
         generateInstanceReport(data, function (attachments) {
-          //console.log(attachments)
           bot.reply(message, attachments);
         });
       }
@@ -125,7 +123,7 @@ function awsListInstances(bot, controller) {
   });
 }
 
-
+//The help message for the list feature
 function helpMessage(bot, controller) {
   return `Genereates a list of ec2 instances on AWS with a given status.
 \`@${bot.identity.name} aws list instances <status> <region>\'
@@ -136,12 +134,3 @@ module.exports = {
   feature: awsListInstances,
   helpMessage,
 };
-
-/*
-0: pending
-16 : running
-32 : shutting-down
-48 : terminated
-64 : stopping
-80 : stopped
-*/
