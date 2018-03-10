@@ -1,6 +1,6 @@
 // creates an interviewee ticket in Jira
 function intervieweeTicket(bot, controller) {
-  controller.hears(['asdf (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.hears(['create interview ticket for ([A-z ,.\'-]+)'], 'direct_message,direct_mention,mention', function(bot, message) {
     bot.reply(message, message.match[1]);
   });
 }
