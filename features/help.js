@@ -1,8 +1,14 @@
-// Replies with help message.
+/*
+ * help
+ *
+ * Display helpful information about each command.
+ *
+*/
 
-function help(bot, controller) {
-  let featureToggles = require('../feature-toggles');
-  controller.hears(['help (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
+let featureToggles = require('../feature-toggles');
+
+let help = (bot, controller) => {
+  controller.hears(['help (.*)'], 'direct_message,direct_mention,mention', (bot, message) => {
     let feature = message.match[1];
     if (feature in featureToggles) {
       let helpMessage = require(`${__dirname}/${feature}`).helpMessage;
@@ -16,16 +22,16 @@ function help(bot, controller) {
     }
   });
 
-  controller.hears(['help'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.hears(['help'], 'direct_message,direct_mention,mention', (bot, message) => {
     let enabledFeatures = Object.keys(featureToggles).filter((key) => featureToggles[key]);
     let disabledFeatures = Object.keys(featureToggles).filter((key) => !featureToggles[key]);
     bot.reply(message, {
       attachments: [
         {
           color: '#36a64f',
-          title: 'Libotrio Features',
+          title: 'Libotrio Features\n',
           title_link: 'http://github.com/liatrio/libotrio',
-          pretext: `\`@${bot.identity.name} help <feature>\` for feature documentation`,
+          pretext: `\nDisplay feature documenation.\n\`@${bot.identity.name} help <feature>\`\n`,
           fields: [
             {
               'title': 'Enabled',
@@ -43,15 +49,21 @@ function help(bot, controller) {
     });
   });
 
+  controller.hears(['(.*)'], 'direct_message,direct_mention,mention', (bot, message) => {
+    let feature = message.match[0];
+    if (feature in featureToggles === false) {
+      bot.reply(message, `No feature _${feature}_ found. Try \`@libotrio help\`.`);
+    }
+  });
 }
 
-function helpMessage(bot, controller) {
-  return `Displays enables/disabled features and documentation.
-\`@${bot.identity.name} help\`
-\`@${bot.identity.name} <feature>\``;
+let helpMessage = (bot, controller) => {
+  return `Display enables/disabled features and documentation.\n
+\`@${bot.identity.name} help <feature>\`\n`;
 }
 
 module.exports = {
   feature: help,
-  helpMessage,
+  helpMessage
 };
+
