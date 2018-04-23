@@ -33,9 +33,8 @@ describe('about tests', () => {
         messages: [{text: 'uptime', isAssertion: true}]
       }
     ]).then((text) => {
-      assert.equal(text.startsWith(':robot_face: I am Libotrio'), true);
-      done();
-    });
+      assert.equal(text.startsWith('I am Libotrio v.'). true);
+    }).finally(done());
   });
 
 });

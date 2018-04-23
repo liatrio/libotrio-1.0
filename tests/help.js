@@ -36,10 +36,9 @@ describe('help tests', () => {
       // assert.equal(text.startsWith(':robot_face: I am Libotrio'), true);
       let attachments = text.attachments;
       assert.equal(attachments.length, 1);
-      assert.equal(attachments[0].title, 'Libotrio Features');
+      assert.equal(attachments[0].title, 'Libotrio Features\n');
       assert('fields' in attachments[0]);
-      done();
-    });
+    }).finally(done());
   });
   
 });
