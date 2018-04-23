@@ -1,45 +1,43 @@
-var os = require('os');
-var config = require('../package');
+/*
+ * about
+ *
+ * Display basic information about Libotrio.
+ *
+*/
 
-function about(bot, controller) {
+const os = require('os');
 
-  function formatUptime(uptime) {
-    var unit = 'second';
-    if (uptime > 60) {
-      uptime = uptime / 60;
-      unit = 'minute';
-    }
-    if (uptime > 60) {
-      uptime = uptime / 60;
-      unit = 'hour';
-    }
-    if (uptime != 1) {
-      unit = unit + 's';
-    }
+let config = require('../package');
 
-    uptime = uptime + ' ' + unit;
-    return uptime;
-  }
+let getUptime = () => {
+  let totalSeconds = Math.floor(process.uptime());
+  let hours = Math.floor( (totalSeconds * 3600) % 60);
+  let minutes = Math.floor( (totalSeconds * 60) % 60);
+  let seconds = Math.floor(totalSeconds % 60);
+  hours = hours < 10 ? '0' + hours : hours;
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  seconds = seconds < 10 ? '0' + seconds : seconds;
+  return `${hours}h ${minutes}m ${seconds}s`;
+};
 
+let about = (bot, controller)  => {
   controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name', 'about'],
-  'direct_message,direct_mention,mention', function(bot, message) {
-
-    var hostname = os.hostname();
-    var uptime = formatUptime(process.uptime());
-
-    bot.reply(message,
-      ':robot_face: I am Libotrio v' + config.version +
-      '. I have been running for ' + uptime + ' on ' + hostname + '.');
+  'direct_message,direct_mention,mention', (bot, message) => {
+    let version = config.version;
+    let uptime = getUptime();
+    let hostname = os.hostname();
+    let platform = os.platform();
+    bot.reply(message, `I am Libotrio v.${config.version}. :robot_face: :liatrio:\n( Uptime: ${uptime}, Hostname: ${hostname}, Platform: ${platform} )`);
   });
-
 }
 
-function helpMessage(bot, controller) {
-  return `Gives uptime and version info of the Libotrio process
-\`@${bot.identity.name} about\``;
+let helpMessage = (bot, controller) => {
+  return `\nDisplay basic information about Libotrio.\n
+\`@${bot.identity.name} about\`\n`;
 }
 
 module.exports = {
   feature: about,
-  helpMessage,
+  helpMessage
 };
+

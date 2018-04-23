@@ -4,7 +4,6 @@
 // (consider how this affects command-matching precedence)
 
 module.exports = {
-  'help': true,
   'about': true,
   'aws-billing': !!process.env.AWS_ACCESS_KEY_ID,
   'beerjar': true,
@@ -20,4 +19,5 @@ module.exports = {
   'yt-search': !!process.env.GOOGLE_API_KEY,
   'remind': true,
   'aws-list-instances': !!process.env.AWS_ACCESS_KEY_ID,
+  'help': true,
 };
