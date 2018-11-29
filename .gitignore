@@ -10,3 +10,6 @@ examples/db_team_bot/
 */.DS_Store
 .env
 .vagrant/
+
+# testing artifacts
+.nyc_output/
