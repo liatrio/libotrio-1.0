@@ -1,6 +1,6 @@
 {
   "name": "libotrio",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Liatrio SlackBot",
   "main": "lib/Botkit.js",
   "dependencies": {
@@ -23,11 +23,12 @@
   "devDependencies": {
     "jscs": "^3.0.7",
     "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
     "should": "^8.0.2",
     "winston": "^2.1.1"
   },
   "scripts": {
-    "test": "mocha tests/*.js"
+    "test": "nyc mocha tests/*.js"
   },
   "repository": {
     "type": "git",
