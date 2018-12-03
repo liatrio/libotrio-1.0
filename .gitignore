@@ -13,3 +13,4 @@ examples/db_team_bot/
 
 # testing artifacts
 .nyc_output/
+coverage/
