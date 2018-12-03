@@ -1,23 +1,14 @@
 pipeline {
   agent none
   stages {
-    stage('build') {
+    stage('test') {
       agent {
         docker { 
-          image 'node:8-alpine' 
-          reuseNode true
+          image 'node:8' 
         }
       }
       steps {
         sh 'npm install && npm test' 
-      }
-    }
-    stage('unit testing') {
-      agent {
-        docker { 
-          image 'node:8-alpine' 
-          reuseNode true
-        }
       }
     }
   }
