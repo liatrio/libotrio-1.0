@@ -1,6 +1,6 @@
 {
   "name": "libotrio",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Liatrio SlackBot",
   "main": "lib/Botkit.js",
   "dependencies": {
@@ -13,6 +13,7 @@
     "googleapis": "^35.0.0",
     "https-proxy-agent": "^2.2.1",
     "jfs": "^0.2.6",
+    "mongodb": "^3.1.10",
     "mustache": "^2.2.1",
     "redis": "^2.4.2",
     "request": "^2.88.0",

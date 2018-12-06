@@ -16,7 +16,7 @@ module.exports = {
   'saveit': !!process.env.ATLASSIAN_USER,
   'shutdown': true,
   'whoami': true,
-  'yt-search': !!process.env.GOOGLE_API_KEY,
+  'yt-search': false //!!process.env.GOOGLE_API_KEY,
   'remind': true,
   'aws-list-instances': !!process.env.AWS_ACCESS_KEY_ID,
   'help': true,
