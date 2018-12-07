@@ -1,14 +1,11 @@
 version: '2'
 services:
-  redis:
-    image: "redis:alpine"
   bot:
     build: .
     command: node libotrio.js
     volumes:
       - .:/code
     environment:
-      - REDIS_URL=redis://bogus:bogus@redis:6379
       - SLACK_ACCESS_TOKEN
       - SLACK_WEBHOOK_URL
       - JENKINS_USER
