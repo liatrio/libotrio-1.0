@@ -37,7 +37,6 @@ This bot demonstrates many of the core features of Botkit:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 var Botkit = require('./lib/Botkit.js');
-var redis = require('./lib/storage/simple_storage.js');
 var mongo = require('./lib/storage/mongo_storage.js');
 var mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.MONGODB_URI});
 var url = require('url');
@@ -50,24 +49,10 @@ if (!process.env.SLACK_ACCESS_TOKEN) {
   process.exit(1);
 }
 
-if (!process.env.REDIS_URL) {
-  console.log('Error: Specify REDIS_URL in environment');
-  process.exit(1);
-}
-
 if (!process.env.MONGODB_URI) {
   console.log('Error: Specify MONGODB_URI in environment');
   process.exit(1);
 }
-
-var redisURL = url.parse(process.env.REDIS_URL);
-
-var redisStorage = redis({
-  namespace: 'libotrio',
-  host: redisURL.hostname,
-  port: redisURL.port,
-  auth_pass: redisURL.auth.split(":")[1]
-});
 
 var controller = Botkit.slackbot({
   storage: mongoStorage,
