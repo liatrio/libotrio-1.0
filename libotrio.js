@@ -37,7 +37,6 @@ This bot demonstrates many of the core features of Botkit:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 var Botkit = require('./lib/Botkit.js');
-var mongo = require('./lib/storage/mongo_storage.js');
 var mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.MONGODB_URI});
 var url = require('url');
 var request = require('request');
