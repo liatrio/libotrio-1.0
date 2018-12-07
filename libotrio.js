@@ -38,6 +38,7 @@ This bot demonstrates many of the core features of Botkit:
 
 var Botkit = require('./lib/Botkit.js');
 var mongo = require('./lib/storage/mongo_storage.js');
+var mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.MONGODB_URI});
 var url = require('url');
 var request = require('request');
 var config = require('./package');
@@ -48,8 +49,13 @@ if (!process.env.SLACK_ACCESS_TOKEN) {
   process.exit(1);
 }
 
+if (!process.env.MONGODB_URI) {
+  console.log('Error: Specify MONGODB_URI in environment');
+  process.exit(1);
+}
+
 var controller = Botkit.slackbot({
-  storage: redisStorage,
+  storage: mongoStorage,
   debug: false
 });
 
