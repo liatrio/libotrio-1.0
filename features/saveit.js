@@ -1,4 +1,4 @@
-var Confluence = require("confluence-api");
+var Confluence = require("@liatrio/confluence-api");
 const request = require('request');
 
 const atlassianUser = process.env.ATLASSIAN_USER;
