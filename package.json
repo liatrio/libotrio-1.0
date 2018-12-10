@@ -1,9 +1,11 @@
 {
   "name": "libotrio",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Liatrio SlackBot",
   "main": "lib/Botkit.js",
-  "engines": "8.14.0",
+  "engines": {
+    "node": "8.14.0"
+  },
   "dependencies": {
     "async": "^2.1.4",
     "aws-sdk": "^2.366.0",
