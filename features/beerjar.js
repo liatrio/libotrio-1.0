@@ -18,23 +18,31 @@ function beerjar(bot, controller) {
     str = str.replace('>','');
     controller.storage.users.get(str, function(err, user) {
       if (!user) {
-        console.log('Username will be set as nobody');
-        user = {
-          id: str,
-          name: 'nobody'
-        };
-      }
-
-      if (!user.beerjar){
-        user.beerjar = amount;
+        bot.api.users.info({user: str}, function(err, response) {
+          var name = response.user.name
+          console.log('Username will be set as ' + name);
+          user = {
+            id: str,
+            name: name
+          };
+          user.beerjar = amount;
+          controller.storage.users.save(user, function(err, id) {
+            bot.reply(message, 'Adding $' + amount + ' to the ' + user.name + ' beerjar.  Beerjar total for ' + user.name + ' = $' + user.beerjar);
+          });
+        })
       }
       else {
-        user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
-      }
+        if (!user.beerjar){
+          user.beerjar = amount;
+        }
+        else {
+          user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
+        }
 
-      controller.storage.users.save(user, function(err, id) {
-        bot.reply(message, 'Adding $' + amount + ' to the ' + user.name + ' beerjar.  Beerjar total for ' + user.name + ' = $' + user.beerjar);
-      });
+        controller.storage.users.save(user, function(err, id) {
+          bot.reply(message, 'Adding $' + amount + ' to the ' + user.name + ' beerjar.  Beerjar total for ' + user.name + ' = $' + user.beerjar);
+        });
+      }
     });
 
   });
