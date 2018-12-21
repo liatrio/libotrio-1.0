@@ -1,6 +1,6 @@
 function beerjar(bot, controller) {
 
-  controller.hears(['beerjar help'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.hears(['beerjar help'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     var text = '_beerjar_ commands are as follows: \n';
     text += '*beerjar @user* - Adds $1 to @user beerjar\n';
     text += '*beerjar me or beerjar me $amt* - Adds $ amount to your own beerjar\n';
@@ -10,7 +10,33 @@ function beerjar(bot, controller) {
     bot.reply(message, text);
   });
 
-  controller.hears(['beerjar me (.*)', 'beerjar me'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.hears(['beerjar total'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
+    controller.storage.users.all(function(err, users) {
+      var userList = '';
+      if (users)
+      {
+        for (var obj in users)
+        {
+          var user = users[obj];
+          userList = userList + user.name + ' :beers: $' + user.beerjar + '\n';
+        }
+        bot.reply(message, '*Beerjar Totals:* \n' + userList);
+      }
+    });
+  });
+
+  controller.hears(['beerjar balance'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
+    controller.storage.users.get(message.user, function(err, user) {
+      if (user) {
+        bot.reply(message, 'Beerjar total for ' + user.name + ' = $' + parseFloat(user.beerjar).toFixed(2));
+      }
+      else {
+        bot.reply(message, 'No user found for that ID yet.  Try \'beerjar me\' to create the user');
+      }
+    });
+  });
+
+  controller.hears(['beerjar me (.*)', 'beerjar me'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     var amount = parseFloat(message.match[1]).toFixed(2);
     console.log(amount);
     if (amount < 0){
@@ -97,32 +123,6 @@ function beerjar(bot, controller) {
     else {
       bot.reply(message, "Please use the *@* when beerjarring someone - Some people share the same name.");
     }
-  });
-
-  controller.hears(['beerjar total'], 'direct_message,direct_mention,mention', function(bot, message) {
-    controller.storage.users.all(function(err, users) {
-      var userList = '';
-      if (users)
-      {
-        for (var obj in users)
-        {
-          var user = users[obj];
-          userList = userList + user.name + ' :beers: $' + user.beerjar + '\n';
-        }
-        bot.reply(message, '*Beerjar Totals:* \n' + userList);
-      }
-    });
-  });
-
-  controller.hears(['beerjar balance'], 'direct_message,direct_mention,mention', function(bot, message) {
-    controller.storage.users.get(message.user, function(err, user) {
-      if (user) {
-        bot.reply(message, 'Beerjar total for ' + user.name + ' = $' + parseFloat(user.beerjar).toFixed(2));
-      }
-      else {
-        bot.reply(message, 'No user found for that ID yet.  Try \'beerjar me\' to create the user');
-      }
-    });
   });
 
   controller.hears(['beerjar clear'], 'direct_message,direct_mention,mention', function(bot, message) {
