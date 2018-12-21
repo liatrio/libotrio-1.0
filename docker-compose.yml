@@ -2,7 +2,7 @@ version: '2'
 services:
   bot:
     build: .
-    command: node libotrio.js
+    command: nodemon libotrio.js
     volumes:
       - .:/code
     environment:
