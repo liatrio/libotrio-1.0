@@ -10,7 +10,7 @@ function beerjar(bot, controller) {
     bot.reply(message, text);
   });
 
-  controller.hears(['beerjar total'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
+  controller.hears(['^(beerjar total)'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     controller.storage.users.all(function(err, users) {
       var userList = '';
       if (users)
@@ -25,7 +25,7 @@ function beerjar(bot, controller) {
     });
   });
 
-  controller.hears(['beerjar balance'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
+  controller.hears(['^(beerjar balance)'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     controller.storage.users.get(message.user, function(err, user) {
       if (user) {
         bot.reply(message, 'Beerjar total for ' + user.name + ' = $' + parseFloat(user.beerjar).toFixed(2));
@@ -36,8 +36,8 @@ function beerjar(bot, controller) {
     });
   });
 
-  controller.hears(['beerjar me (.*)', 'beerjar me'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
-    var amount = parseFloat(message.match[1]).toFixed(2);
+  controller.hears(['^(beerjar me) (.*)', '^(beerjar me)'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
+    var amount = parseFloat(message.match[2]).toFixed(2);
     console.log(amount);
     if (amount < 0){
       amount = 0.00;
@@ -79,9 +79,9 @@ function beerjar(bot, controller) {
 
   });
 
-  controller.hears(['beerjar (.*)'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
+  controller.hears(['^(beerjar) (.*)'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     var amount = 1.00;
-    var str = message.match[1];
+    var str = message.match[2];
     var validUser = false;
     console.log(message)
     if (str.includes('@')) {
@@ -94,16 +94,21 @@ function beerjar(bot, controller) {
       controller.storage.users.get(str, function(err, user) {
         if (!user) {
           bot.api.users.info({user: str}, function(err, response) {
-            var name = response.user.name
-            console.log('Username will be set as ' + name);
-            user = {
-              id: str,
-              name: name
-            };
-            user.beerjar = amount;
-            controller.storage.users.save(user, function(err, id) {
-              bot.reply(message, ':beers: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
-            });
+            if (!response.user){
+              bot.reply(message, "That's not a Slack user.");
+            }
+            else{
+              var name = response.user.name
+              console.log('Username will be set as ' + name);
+              user = {
+                id: str,
+                name: name
+              };
+              user.beerjar = amount;
+              controller.storage.users.save(user, function(err, id) {
+                bot.reply(message, ':beers: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
+              });             
+            }
           })
         }
         else {
