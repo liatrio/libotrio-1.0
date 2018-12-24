@@ -1,6 +1,5 @@
 const assert = require('assert');
 const botMock = require('./mocks/botMock');
-const SimpleStorage = require('../lib/storage/simple_storage');
 const echoFeature = require('../features/echo').feature;
 
 describe('echo tests', () => {
@@ -11,7 +10,6 @@ describe('echo tests', () => {
     self.userName = 'test';
     self.controller = new botMock.controller(self.slackId, self.userName);
 
-    self.controller.storage = SimpleStorage({path: 'tests/storage'});
     self.controller.bot.identity = {name: 'testName'};
     echoFeature(self.controller.bot, self.controller);
 
