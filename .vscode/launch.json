@@ -8,6 +8,7 @@
             "port": 9229,
             "address": "127.0.0.1",
             "localRoot": "${workspaceFolder}",
+            "restart": true,
             "remoteRoot": "/code/",
             "protocol": "inspector"
         },
