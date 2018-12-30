@@ -1,0 +1,37 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Docker Attach Node",
+            "port": 9229,
+            "address": "127.0.0.1",
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/code/",
+            "protocol": "inspector"
+        },
+		{
+			"name": "Local Attach",
+			"type": "node",
+			"request": "launch",
+			"program": "${workspaceRoot}/libotrio.js",
+			"stopOnEntry": false,
+			"args": [],
+			"cwd": "${workspaceRoot}",
+			"runtimeExecutable": null,
+			"runtimeArgs": [
+				"--nolazy"
+			],
+			"env": {
+				"NODE_ENV": "development",
+                "SLACK_ACCESS_TOKEN": "",
+                "SLACK_WEBHOOK_URL": "",
+                "MONGODB_URI": ""
+			},
+			"console": "internalConsole",
+			"sourceMaps": false,
+			"outFiles": []
+		}
+	]
+}
