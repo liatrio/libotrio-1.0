@@ -1,0 +1,11 @@
+version: '2'
+services:
+  bot:
+    extends: 
+      file: docker-compose.yml
+      service: bot
+    ports:
+      - "9229:9229"
+    entrypoint: ["npm","run","debug"]
+
+
