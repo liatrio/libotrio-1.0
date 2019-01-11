@@ -23,10 +23,8 @@ This bot demonstrates many of the core features of Botkit:
   The bot will reply "Hello!"
   Say: "who are you?"
   The bot will tell you its name, where it running, and for how long.
-  Say: "Call me <nickname>"
-  Tell the bot your nickname. Now you are friends.
   Say: "who am I?"
-  The bot will tell you your nickname, if it knows one for you.
+  The bot will tell you your name, if it knows one for you.
   Say: "shutdown"
   The bot will ask if you are sure, and then shut itself down.
   Make sure to invite your bot into other channels using /invite @<my bot>!
