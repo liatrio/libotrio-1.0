@@ -53,7 +53,7 @@ function beerjar(bot, controller) {
             bot.botkit.log('Failed to get the messages :(', err);
           }
           if (res && res.ok) {
-            username = res.user.name;
+            username = res.user.profile.display_name;
           }
         });
         console.log('Username has been found as ' + username);
@@ -98,7 +98,7 @@ function beerjar(bot, controller) {
               bot.reply(message, "That's not a Slack user.");
             }
             else{
-              var name = response.user.name
+              var name = response.user.profile.display_name
               console.log('Username will be set as ' + name);
               user = {
                 id: str,
