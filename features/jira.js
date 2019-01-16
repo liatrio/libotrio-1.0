@@ -87,13 +87,13 @@ function buildIssueAttachment(issue) {
 }
 
 function jira(bot, controller) {
-  if (!(atlassianUser && atlassianPass)) { 
+  if (!(atlassianUser && atlassianPass)) {
     console.error('ERR: Jira feature requires ATLASSIAN_USER and ATLASSIAN_PASS envars.');
     return;
   }
 
-  controller.hears(['([a-zA-Z]+-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
-    let ticketKeys = message.text.match(/([A-Z]+-[0-9]+)/gi).map((m) => m.toUpperCase());
+  controller.hears(['([a-zA-Z]+[a-zA-Z0-9_]*-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
+    let ticketKeys = message.text.match(/([A-Z0-9_]+-[0-9]+)/gi).map((m) => m.toUpperCase());
     async.map(ticketKeys, getIssue, (error, issues) => {
       if (error) {
         console.error(error);
