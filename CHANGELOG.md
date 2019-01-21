@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.0.2
+* add birthday reminder feature skeleton
+
 ## v2.0.1
 * Fixed Jira bug not registering numbers in tickets.
 
