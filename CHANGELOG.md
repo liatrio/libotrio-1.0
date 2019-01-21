@@ -1,6 +1,6 @@
 # Changelog for Libotrio
 
-## v2.2.0
+## v2.1.0
 * add birthday reminder feature skeleton
 
 ## v2.0.1
