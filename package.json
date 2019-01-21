@@ -1,6 +1,6 @@
 {
   "name": "libotrio",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Liatrio SlackBot",
   "main": "lib/Botkit.js",
   "engines": {
