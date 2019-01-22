@@ -7,6 +7,8 @@ services:
       - .:/code
     environment:
       - SLACK_ACCESS_TOKEN
+      - SLACK_CLIENTID
+      - SLACK_CLIENTSECRET
       - SLACK_WEBHOOK_URL
       - JENKINS_USER
       - JENKINS_API_TOKEN

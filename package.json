@@ -12,6 +12,7 @@
     "aws-sdk": "^2.366.0",
     "back": "^1.0.1",
     "body-parser": "^1.14.2",
+    "botkit": "^0.7.0",
     "botkit-storage-mongo": "^1.0.7",
     "express": "^4.13.3",
     "googleapis": "^35.0.0",
