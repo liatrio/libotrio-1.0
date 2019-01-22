@@ -1,6 +1,9 @@
 version: '2'
 services:
   bot:
+    ports:
+      - "3000:3000"
+      - "9229:9229"
     build: .
     volumes:
       - .:/code

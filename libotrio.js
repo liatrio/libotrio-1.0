@@ -42,32 +42,51 @@ var config = require('./package');
 var featureToggles = require('./feature-toggles');
 
 if (!process.env.SLACK_ACCESS_TOKEN) {
-  console.log('Error: Specify SLACK_ACCESS_TOKEN in environment');
-  process.exit(1);
+    console.log('Error: Specify SLACK_ACCESS_TOKEN in environment');
+    process.exit(1);
 }
 
 if (!process.env.MONGODB_URI) {
-  console.log('Error: Specify MONGODB_URI in environment');
-  process.exit(1);
+    console.log('Error: Specify MONGODB_URI in environment');
+    process.exit(1);
 }
 
 var controller = Botkit.slackbot({
-  storage: mongoStorage,
-  debug: false
+    storage: mongoStorage,
+    debug: false
 });
 
+controller.configureSlackApp({
+    clientId: process.env.SLACK_CLIENTID,
+    clientSecret: process.env.SLACK_CLIENTSECRET,
+    scopes: ['bot']
+});
+
+controller.setupWebserver(process.env.port, function (err, webserver) {
+    controller.createWebhookEndpoints(controller.webserver);
+
+    controller.createOauthEndpoints(controller.webserver, function (err, req, res) {
+        if (err) {
+            res.status(500).send('ERROR: ' + err);
+        } else {
+            res.send('Success!');
+        }
+    });
+});
+
+
 var bot = controller.spawn({
-  token: process.env.SLACK_ACCESS_TOKEN,
-  incoming_webhook: {
-    url: process.env.SLACK_WEBHOOK_URL
-  }
+    token: process.env.SLACK_ACCESS_TOKEN,
+    incoming_webhook: {
+        url: process.env.SLACK_WEBHOOK_URL
+    }
 });
 
 // Install features
 for (var feature in featureToggles) {
-  if (featureToggles[feature]) {
-    require(`${__dirname}/features/${feature}`).feature(bot, controller);
-  }
+    if (featureToggles[feature]) {
+        require(`${__dirname}/features/${feature}`).feature(bot, controller);
+    }
 }
 
 bot.startRTM();
