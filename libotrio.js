@@ -63,8 +63,7 @@ var bot = controller.spawn({
   }
 });
 
-if (process.env.SLACK_CLIENTID != "" || process.env.SLACK_CLIENTID != "undefined" ||
-    process.env.SLACK_CLIENTSECRET != "" || process.env.SLACK_CLIENTSECRET != "undefined"){
+if (process.env.SLACK_CLIENTID && process.env.SLACK_CLIENTSECRET){
   controller.configureSlackApp({
       clientId: process.env.SLACK_CLIENTID,
       clientSecret: process.env.SLACK_CLIENTSECRET,
