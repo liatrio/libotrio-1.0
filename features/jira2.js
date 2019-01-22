@@ -90,27 +90,71 @@ function jira2(bot, controller) {
             });
 
 
-        //********************REFERENCE BELOW
+    });
 
-        // const status = response => {
-        //     if (response.status >= 200 && response.status < 300) {
-        //         return Promise.resolve(response)
-        //     }
-        //     return Promise.reject(new Error(response.statusText))
-        // };
-        //
-        // const json = response => response.json()
-        //
-        // fetch('/todos.json')
-        //     .then(status)
-        //     .then(json)
-        //     .then(data => {
-        //         console.log('Request succeeded with JSON response', data)
-        //     })
-        //     .catch(error => {
-        //         console.log('Request failed', error)
-        //     })
+    controller.hears('interactive', 'direct_message', function (bot, message) {
 
+        bot.reply(message, {
+            attachments: [
+                {
+                    title: 'Do you want to interact with my buttons?',
+                    callback_id: '123',
+                    attachment_type: 'default',
+                    actions: [
+                        {
+                            "name": "yes",
+                            "text": "Yes",
+                            "value": "yes",
+                            "type": "button",
+                        },
+                        {
+                            "name": "no",
+                            "text": "No",
+                            "value": "no",
+                            "type": "button",
+                        }
+                    ]
+                }
+            ]
+        });
+    });
+
+    // receive an interactive message, and reply with a message that will replace the original
+    controller.on('interactive_message_callback', function (bot, message) {
+
+        // check message.actions and message.callback_id to see what action to take...
+
+        bot.replyInteractive(message, {
+            text: '...',
+            attachments: [
+                {
+                    title: 'My buttons',
+                    callback_id: '123',
+                    attachment_type: 'default',
+                    actions: [
+                        {
+                            "name": "yes",
+                            "text": "Yes!",
+                            "value": "yes",
+                            "type": "button",
+                        },
+                        {
+                            "text": "No!",
+                            "name": "no",
+                            "value": "delete",
+                            "style": "danger",
+                            "type": "button",
+                            "confirm": {
+                                "title": "Are you sure?",
+                                "text": "This will do something!",
+                                "ok_text": "Yes",
+                                "dismiss_text": "No"
+                            }
+                        }
+                    ]
+                }
+            ]
+        });
 
     });
 }
