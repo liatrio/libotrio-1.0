@@ -23,10 +23,8 @@ This bot demonstrates many of the core features of Botkit:
   The bot will reply "Hello!"
   Say: "who are you?"
   The bot will tell you its name, where it running, and for how long.
-  Say: "Call me <nickname>"
-  Tell the bot your nickname. Now you are friends.
   Say: "who am I?"
-  The bot will tell you your nickname, if it knows one for you.
+  The bot will tell you your name, if it knows one for you.
   Say: "shutdown"
   The bot will ask if you are sure, and then shut itself down.
   Make sure to invite your bot into other channels using /invite @<my bot>!
@@ -65,23 +63,26 @@ var bot = controller.spawn({
   }
 });
 
-controller.configureSlackApp({
-    clientId: process.env.SLACK_CLIENTID,
-    clientSecret: process.env.SLACK_CLIENTSECRET,
-    scopes: ['bot']
-});
+if (process.env.SLACK_CLIENTID != "" || process.env.SLACK_CLIENTID != "undefined" ||
+    process.env.SLACK_CLIENTSECRET != "" || process.env.SLACK_CLIENTSECRET != "undefined"){
+  controller.configureSlackApp({
+      clientId: process.env.SLACK_CLIENTID,
+      clientSecret: process.env.SLACK_CLIENTSECRET,
+      scopes: ['bot']
+  });
 
-controller.setupWebserver(process.env.PORT, function (err, webserver) {
-    controller.createWebhookEndpoints(controller.webserver);
+  controller.setupWebserver(process.env.PORT, function (err, webserver) {
+      controller.createWebhookEndpoints(controller.webserver);
 
-    controller.createOauthEndpoints(controller.webserver, function (err, req, res) {
-        if (err) {
-            res.status(500).send('ERROR: '+ err);
-        } else {
-            res.send('Success!');
-        }
-    });
-});
+      controller.createOauthEndpoints(controller.webserver, function (err, req, res) {
+          if (err) {
+              res.status(500).send('ERROR: '+ err);
+          } else {
+              res.send('Success!');
+          }
+      });
+  });
+}
 
 // Install features
 for (var feature in featureToggles) {
