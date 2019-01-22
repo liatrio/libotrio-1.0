@@ -34,7 +34,7 @@ This bot demonstrates many of the core features of Botkit:
     -> http://howdy.ai/botkit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-var Botkit = require('./lib/Botkit.js');
+var Botkit = require('botkit');
 var mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.MONGODB_URI});
 var url = require('url');
 var request = require('request');
@@ -62,6 +62,26 @@ var bot = controller.spawn({
     url: process.env.SLACK_WEBHOOK_URL
   }
 });
+
+if (process.env.SLACK_CLIENTID && process.env.SLACK_CLIENTSECRET){
+  controller.configureSlackApp({
+      clientId: process.env.SLACK_CLIENTID,
+      clientSecret: process.env.SLACK_CLIENTSECRET,
+      scopes: ['bot']
+  });
+
+  controller.setupWebserver(process.env.PORT, function (err, webserver) {
+      controller.createWebhookEndpoints(controller.webserver);
+
+      controller.createOauthEndpoints(controller.webserver, function (err, req, res) {
+          if (err) {
+              res.status(500).send('ERROR: '+ err);
+          } else {
+              res.send('Success!');
+          }
+      });
+  });
+}
 
 // Install features
 for (var feature in featureToggles) {
