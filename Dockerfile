@@ -1,5 +1,5 @@
-FROM node:7.4.0
+FROM node:8.14.0-alpine
 ADD . /code
 WORKDIR /code
-RUN npm install
-CMD node libotrio.js
+RUN npm install && npm install -g nodemon
+ENTRYPOINT ["npm", "start"]
