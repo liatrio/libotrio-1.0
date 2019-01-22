@@ -65,6 +65,24 @@ var bot = controller.spawn({
   }
 });
 
+controller.configureSlackApp({
+    clientId: process.env.SLACK_CLIENTID,
+    clientSecret: process.env.SLACK_CLIENTSECRET,
+    scopes: ['bot']
+});
+
+controller.setupWebserver(process.env.PORT, function (err, webserver) {
+    controller.createWebhookEndpoints(controller.webserver);
+
+    controller.createOauthEndpoints(controller.webserver, function (err, req, res) {
+        if (err) {
+            res.status(500).send('ERROR: '+ err);
+        } else {
+            res.send('Success!');
+        }
+    });
+});
+
 // Install features
 for (var feature in featureToggles) {
   if (featureToggles[feature]) {
