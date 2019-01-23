@@ -63,7 +63,7 @@ function getTickets() {
 }
 
 function jira(bot, controller) {
-    controller.hears(['get ([a-zA-Z -]*) tickets for ([a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
+    controller.hears(['get ([a-zA-Z -_]*)tickets for ([a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
 
         bot.reply(message, `\`\`\`${JSON.stringify(message.match, null, 2)}\`\`\``);
 
