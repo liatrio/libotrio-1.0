@@ -27,27 +27,64 @@ function handleBoard(bot, message) {
     });
 }
 
+function getTickets() {
+    var statusFilter = (msg.text.split(" ")[1] === undefined ? "to do" : msg.text.substr(msg.text.indexOf(' ') + 1).toLowerCase());
+
+    var opts = {
+        boardId: msg.text.split(" ")[0],
+        maxResults: "9999",
+        fields: ["status", "summary"],
+        jql: "status in ('" + statusFilter + "')"
+    };
+
+    var output = "Ticket list for " + msg.text.split(" ")[0];
+    var ticketAttachments = [];
+
+    jira.board.getIssuesForBoard(opts, function (error, issues) {
+        if (error) {
+            output = "There was an error: " + error;
+        } else {
+            for (var i = 0; i < issues.issues.length; i++) {
+                var newTicket = {
+                    t_key: issues.issues[i].key,
+                    t_summary: issues.issues[i].fields.summary,
+                    t_status: issues.issues[i].fields.status.name,
+                    t_link: "https://" + JIRA_HOST + "/secure/RapidBoard.jspa?rapidView=" + msg.text.split(" ")[0] + "&modal=detail&selectedIssue=" + issues.issues[i].key
+                };
+                var ticketAttachment = {
+                    text: `<${newTicket.t_link}|${newTicket.t_key}>` + ': ' + newTicket.t_summary + " - *" + newTicket.t_status + "*"
+                }
+                ticketAttachments.push(ticketAttachment);
+            }
+        }
+        bot.reply({text: output, attachments: ticketAttachments});
+    });
+
+}
 
 function jira(bot, controller) {
-    controller.hears(['get tickets for ([a-zA-Z]*[a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function (bot, message) {
+    controller.hears(['get ([a-zA-Z ]*) tickets for ([a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
+
+        bot.reply(message, `\`\`\`${JSON.stringify(message.match, null, 2)}\`\`\``);
+
         if (typeof message.match[1] === 'undefined' || message.match[1] === null) {
             bot.reply(message, "Please specify which board you want to pull tickets from.");
             return;
         }
 
-        let boardName = message.match[1];
-
-        console.log("Checking for a board matching \`" + boardName + "\`");
-
-        selectBoard(boardName)
-            .then(response => {
-                console.log(`Response: ${JSON.stringify(response, null, 2)}`);
-                bot.reply(message, String(response));
-                return response;
-            }, rejection => {
-                console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
-                bot.reply(message, rejection);
-            });
+        // let boardName = message.match[1];
+        //
+        // console.log("Checking for a board matching \`" + boardName + "\`");
+        //
+        // selectBoard(boardName)
+        //     .then(response => {
+        //         console.log(`Response: ${JSON.stringify(response, null, 2)}`);
+        //         bot.reply(message, String(response));
+        //         return response;
+        //     }, rejection => {
+        //         console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
+        //         bot.reply(message, rejection);
+        //     });
 
     });
 
