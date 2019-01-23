@@ -56,7 +56,7 @@ function handleButtons(bot, message){
 
 function handleBoard(bot, message){
     bot.replyInteractive(message, {
-        text: `Board selected: ${message.attachments[0].actions[0].value}`,
+        text: `Board selected: ${message.value}`,
         attachments: []
     });
 }
