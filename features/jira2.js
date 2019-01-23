@@ -123,7 +123,8 @@ function jira2(bot, controller) {
     controller.on('interactive_message_callback', function (bot, message) {
 
         // check message.actions and message.callback_id to see what action to take...
-
+        console.log(JSON.stringify(message, null, 2));
+        
         bot.replyInteractive(message, {
             text: '...',
             attachments: [
