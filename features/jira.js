@@ -27,50 +27,6 @@ function handleBoard(bot, message) {
     });
 }
 
-function selectBoard(id) {
-    if (!isNaN(id)) {
-        return Promise.resolve(Number(id));
-    } else {
-        return jiraClient.board.getAllBoards({name: id})
-            .then((boards, error) => {
-                console.log(`result: ${JSON.stringify(boards, null, 2)}`);
-                if (typeof error === 'undefined') {
-                    console.log(`Size of boards array: ${boards.values.length}`);
-                    if (boards.values.length > 1) {
-                        let reply_with_attachments = {
-                            attachments: [{
-                                text: 'Multiple boards found matching that name; please select one:',
-                                callback_id: 'board_select',
-                                actions: [
-                                    {
-                                        name: 'board_select',
-                                        text: 'Please select one',
-                                        type: 'select',
-                                        options: []
-                                    }
-                                ]
-                            }]
-                        };
-
-                        boards.values.forEach((board) => {
-                            reply_with_attachments.attachments[0].actions[0].options.push({
-                                text: board.name,
-                                value: board.id
-                            });
-                        });
-
-                        return Promise.reject(reply_with_attachments)
-                    } else {
-                        return Promise.resolve(boards.values[0].id);
-                    }
-                } else {
-                    console.log("Found error from API: " + JSON.stringify(error, null, 2));
-                    return Promise.reject(error);
-                }
-            });
-    }
-
-}
 
 function jira(bot, controller) {
     controller.hears(['get tickets for ([a-zA-Z]*[a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function (bot, message) {
@@ -107,6 +63,53 @@ function jira(bot, controller) {
 
 function helpMessage(bot, controller) {
     return "todo";
+}
+
+function selectBoard(id) {
+    if (!isNaN(id)) {
+        return Promise.resolve(Number(id));
+    } else {
+
+        let getBoard = (boards, error) => {
+            console.log(`result: ${JSON.stringify(boards, null, 2)}`);
+            if (typeof error === 'undefined') {
+                console.log(`Size of boards array: ${boards.values.length}`);
+                if (boards.values.length > 1) {
+                    let reply_with_attachments = {
+                        attachments: [{
+                            text: 'Multiple boards found matching that name; please select one:',
+                            callback_id: 'board_select',
+                            actions: [
+                                {
+                                    name: 'board_select',
+                                    text: 'Please select one',
+                                    type: 'select',
+                                    options: []
+                                }
+                            ]
+                        }]
+                    };
+
+                    boards.values.forEach((board) => {
+                        reply_with_attachments.attachments[0].actions[0].options.push({
+                            text: board.name,
+                            value: board.id
+                        });
+                    });
+
+                    return Promise.reject(reply_with_attachments)
+                } else {
+                    return Promise.resolve(boards.values[0].id);
+                }
+            } else {
+                console.log("Found error from API: " + JSON.stringify(error, null, 2));
+                return Promise.reject(error);
+            }
+        };
+
+        return jiraClient.board.getAllBoards({name: id}).then(getBoard);
+    }
+
 }
 
 module.exports = {
