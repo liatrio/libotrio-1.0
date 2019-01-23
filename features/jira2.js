@@ -80,11 +80,8 @@ function jira2(bot, controller) {
                     .then((boards, error) => {
                         console.log(`result: ${JSON.stringify(boards, null, 2)}`);
                         if (typeof error === 'undefined') {
-                            console.log("Doesn't appear to be any errors from the API...");
                             console.log(`Size of boards array: ${boards.values.length}`);
                             if (boards.values.length > 1) {
-                                console.log("Multiple boards found, building error message...");
-
                                 let reply_with_attachments = {
                                     attachments: [{
                                         text: 'Multiple boards found matching that name; please select one:',
@@ -109,7 +106,6 @@ function jira2(bot, controller) {
 
                                 return Promise.reject(reply_with_attachments)
                             } else {
-                                console.log(`One board found, returning ID '${boards.values[0].id}'`);
                                 return Promise.resolve(boards.values[0].id);
                             }
                         } else {
@@ -163,9 +159,6 @@ function jira2(bot, controller) {
     // receive an interactive message, and reply with a message that will replace the original
     controller.on('interactive_message_callback', function (bot, message) {
 
-        // check message.actions and message.callback_id to see what action to take...
-        console.log(JSON.stringify(message, null, 2));
-
         if(message.callback_id === 'buttons') {
             handleButtons(bot, message);
         }
@@ -173,7 +166,6 @@ function jira2(bot, controller) {
         if(message.callback_id === 'board_select'){
             handleBoard(bot, message);
         }
-
 
     });
 }
