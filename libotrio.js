@@ -34,12 +34,9 @@ This bot demonstrates many of the core features of Botkit:
     -> http://howdy.ai/botkit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-var Botkit = require('botkit');
-var mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.MONGODB_URI});
-var url = require('url');
-var request = require('request');
-var config = require('./package');
-var featureToggles = require('./feature-toggles');
+const botkit = require('botkit');
+const mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.MONGODB_URI});
+const featureToggles = require('./feature-toggles');
 
 if (!process.env.SLACK_ACCESS_TOKEN) {
     console.log('Error: Specify SLACK_ACCESS_TOKEN in environment');
@@ -51,21 +48,23 @@ if (!process.env.MONGODB_URI) {
     process.exit(1);
 }
 
-var controller = Botkit.slackbot({
+const controller = botkit.slackbot({
     clientSigningSecret: process.env.SLACK_VERIFICATION_TOKEN,
     storage: mongoStorage,
     debug: false
 });
 
 
-var bot = controller.spawn({
+const bot = controller.spawn({
     token: process.env.SLACK_ACCESS_TOKEN,
     incoming_webhook: {
         url: process.env.SLACK_WEBHOOK_URL
     }
 });
 
-if (process.env.SLACK_CLIENTID && process.env.SLACK_CLIENTSECRET){
+// used for slack apps, and communication from slack back to the bot via a webhook
+// requires slack SLACK_CLIENTID, SLACK_CLIENTSECRET, and PORT to be set via environment variables
+if (process.env.SLACK_CLIENTID && process.env.SLACK_CLIENTSECRET && process.env.PORT){
   controller.configureSlackApp({
       clientId: process.env.SLACK_CLIENTID,
       clientSecret: process.env.SLACK_CLIENTSECRET,
@@ -85,7 +84,7 @@ if (process.env.SLACK_CLIENTID && process.env.SLACK_CLIENTSECRET){
   });
 }
 
-// Install features
+// enable features defined in feature toggle
 for (var feature in featureToggles) {
     if (featureToggles[feature]) {
         require(`${__dirname}/features/${feature}`).feature(bot, controller);
