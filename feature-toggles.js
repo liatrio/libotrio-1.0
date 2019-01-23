@@ -10,7 +10,7 @@ module.exports = {
   'birthdays': true,
   'echo': true,
   'greet': true,
-  'jira2': !!process.env.ATLASSIAN_USER,
+  'jira': !!process.env.ATLASSIAN_USER,
   'joke': true,
   'promote': !!process.env.JENKINS_USER,
   'saveit': !!process.env.ATLASSIAN_USER,
