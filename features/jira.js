@@ -27,40 +27,47 @@ function handleBoard(bot, message) {
     });
 }
 
-function selectBoard(boards, error){
-    console.log(`result: ${JSON.stringify(boards, null, 2)}`);
-    if (typeof error === 'undefined') {
-        console.log(`Size of boards array: ${boards.values.length}`);
-        if (boards.values.length > 1) {
-            let reply_with_attachments = {
-                attachments: [{
-                    text: 'Multiple boards found matching that name; please select one:',
-                    callback_id: 'board_select',
-                    actions: [
-                        {
-                            name: 'board_select',
-                            text: 'Please select one',
-                            type: 'select',
-                            options: []
-                        }
-                    ]
-                }]
-            };
-
-            boards.values.forEach((board) => {
-                reply_with_attachments.attachments[0].actions[0].options.push({
-                    text: board.name,
-                    value: board.id
-                });
-            });
-
-            return Promise.reject(reply_with_attachments)
-        } else {
-            return Promise.resolve(boards.values[0].id);
-        }
+function selectBoard(id) {
+    if (!isNaN(id)) {
+        return Promise.resolve(Number(id));
     } else {
-        console.log("Found error from API: " + JSON.stringify(error, null, 2));
-        return Promise.reject(error);
+        return jiraClient.board.getAllBoards({name: id})
+            .then((boards, error) => {
+                console.log(`result: ${JSON.stringify(boards, null, 2)}`);
+                if (typeof error === 'undefined') {
+                    console.log(`Size of boards array: ${boards.values.length}`);
+                    if (boards.values.length > 1) {
+                        let reply_with_attachments = {
+                            attachments: [{
+                                text: 'Multiple boards found matching that name; please select one:',
+                                callback_id: 'board_select',
+                                actions: [
+                                    {
+                                        name: 'board_select',
+                                        text: 'Please select one',
+                                        type: 'select',
+                                        options: []
+                                    }
+                                ]
+                            }]
+                        };
+
+                        boards.values.forEach((board) => {
+                            reply_with_attachments.attachments[0].actions[0].options.push({
+                                text: board.name,
+                                value: board.id
+                            });
+                        });
+
+                        return Promise.reject(reply_with_attachments)
+                    } else {
+                        return Promise.resolve(boards.values[0].id);
+                    }
+                } else {
+                    console.log("Found error from API: " + JSON.stringify(error, null, 2));
+                    return Promise.reject(error);
+                }
+            });
     }
 
 }
@@ -76,16 +83,7 @@ function jira(bot, controller) {
 
         console.log("Checking for a board matching \`" + boardName + "\`");
 
-        let getBoard = id => {
-            if (!isNaN(id)) {
-                return Promise.resolve(Number(id));
-            } else {
-                return jiraClient.board.getAllBoards({name: id})
-                    .then(selectBoard);
-            }
-        };
-
-        getBoard(boardName)
+        selectBoard(boardName)
             .then(response => {
                 console.log(`Response: ${JSON.stringify(response, null, 2)}`);
                 bot.reply(message, String(response));
@@ -94,7 +92,6 @@ function jira(bot, controller) {
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
                 bot.reply(message, rejection);
             });
-
 
     });
 
