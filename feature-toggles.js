@@ -18,6 +18,7 @@ module.exports = {
   'whoami': true,
   'yt-search': false, //!!process.env.GOOGLE_API_KEY,
   'remind': true,
+  'takeTicket': true,
   'aws-list-instances': !!process.env.AWS_ACCESS_KEY_ID,
   'help': true,
 };
