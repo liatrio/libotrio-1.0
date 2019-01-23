@@ -52,6 +52,7 @@ if (!process.env.MONGODB_URI) {
 }
 
 var controller = Botkit.slackbot({
+    clientSigningSecret: process.env.SLACK_VERIFICATION_TOKEN,
     storage: mongoStorage,
     debug: false
 });
