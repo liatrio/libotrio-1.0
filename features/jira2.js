@@ -20,6 +20,47 @@ var jira = new JiraClient({
     }
 });
 
+function handleButtons(bot, message){
+    bot.replyInteractive(message, {
+        text: '...',
+        attachments: [
+            {
+                title: 'My buttons',
+                callback_id: '123',
+                attachment_type: 'default',
+                actions: [
+                    {
+                        "name": "yes",
+                        "text": "Yes!",
+                        "value": "yes",
+                        "type": "button",
+                    },
+                    {
+                        "text": "No!",
+                        "name": "no",
+                        "value": "delete",
+                        "style": "danger",
+                        "type": "button",
+                        "confirm": {
+                            "title": "Are you sure?",
+                            "text": "This will do something!",
+                            "ok_text": "Yes",
+                            "dismiss_text": "No"
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+}
+
+function handleBoard(bot, message){
+    bot.replyInteractive(message, {
+        text: `Board selected: ${message.attachments[0].actions[0].value}`,
+        attachments: []
+    });
+}
+
 function jira2(bot, controller) {
     controller.hears(['get tickets for ([a-zA-Z]*[a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function (bot, message) {
         if (typeof message.match[1] === 'undefined' || message.match[1] === null) {
@@ -98,7 +139,7 @@ function jira2(bot, controller) {
             attachments: [
                 {
                     title: 'Do you want to interact with my buttons?',
-                    callback_id: '123',
+                    callback_id: 'buttons',
                     attachment_type: 'default',
                     actions: [
                         {
@@ -124,38 +165,15 @@ function jira2(bot, controller) {
 
         // check message.actions and message.callback_id to see what action to take...
         console.log(JSON.stringify(message, null, 2));
-        
-        bot.replyInteractive(message, {
-            text: '...',
-            attachments: [
-                {
-                    title: 'My buttons',
-                    callback_id: '123',
-                    attachment_type: 'default',
-                    actions: [
-                        {
-                            "name": "yes",
-                            "text": "Yes!",
-                            "value": "yes",
-                            "type": "button",
-                        },
-                        {
-                            "text": "No!",
-                            "name": "no",
-                            "value": "delete",
-                            "style": "danger",
-                            "type": "button",
-                            "confirm": {
-                                "title": "Are you sure?",
-                                "text": "This will do something!",
-                                "ok_text": "Yes",
-                                "dismiss_text": "No"
-                            }
-                        }
-                    ]
-                }
-            ]
-        });
+
+        if(message.callback_id === 'buttons') {
+            handleButtons(bot, message);
+        }
+
+        if(message.callback_id === 'board_select'){
+            handleBoard(bot, message);
+        }
+
 
     });
 }
