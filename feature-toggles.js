@@ -7,6 +7,7 @@ module.exports = {
   'about': true,
   'aws-billing': !!process.env.AWS_ACCESS_KEY_ID,
   'beerjar': true,
+  'birthdays': true,
   'echo': true,
   'greet': true,
   'jira2': !!process.env.ATLASSIAN_USER,
