@@ -55,7 +55,7 @@ function getTicketsForBoard(bot, message, boardId, statusFilter) {
 
     let output;
     if(message.match[2]){
-        output = `\`${statusFilter}\` tickets for \`message.match[2]\` (ID: ${boardId})`;
+        output = `\`${statusFilter}\` tickets for \`${message.match[2]}\` (ID: ${boardId})`;
     } else{
         output = `\`${statusFilter}\` tickets for board ${boardId}`;
 
