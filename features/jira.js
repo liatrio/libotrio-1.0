@@ -91,6 +91,8 @@ function jira(bot, controller) {
                 bot.reply(message, String(response));
                 return response;
             }, rejection => {
+                rejection.attachment[0].statusFilter = status;
+                console.log(`******* BEFORE SENDING *******\n${JSON.stringify(rejection, null, 2)}\n******* /BEFORE SENDING *******`);
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
                 bot.reply(message, rejection);
             });
