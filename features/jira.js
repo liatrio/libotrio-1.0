@@ -33,6 +33,7 @@ function handleBoard(bot, message) {
 
 function getTicketsForBoard(bot, message, boardId) {
 
+    console.log(`** inside getTicketsForBoard`)
     let statusFilter = message.original_message.attachments[0].fields[0].value || message.attachments[0].fields[0].value || 'to do'; //todo: this needs refinement
     bot.reply(message, `statusFilter: ${statusFilter}`);
 
@@ -123,9 +124,9 @@ function selectBoard(id) {
     } else {
 
         let getBoard = (boards, error) => {
-            console.log(`result: ${JSON.stringify(boards, null, 2)}`);
-            if (typeof error === 'undefined') {
-                console.log(`Size of boards array: ${boards.values.length}`);
+            console.log(`** Result of getAllBoards:\n ${JSON.stringify(boards, null, 2)}`);
+            if (!error) {
+                console.log(`** Found ${boards.values.length} boards; prompting user for input`);
                 if (boards.values.length > 1) {
                     let reply_with_attachments = {
                         attachments: [{
@@ -151,6 +152,7 @@ function selectBoard(id) {
 
                     return Promise.reject(reply_with_attachments)
                 } else {
+                    console.log(`** One board found, getting tickets for board ID ${boards.values[0].id}`);
                     return getTicketsForBoard(bot, message, boards.values[0].id);
                 }
             } else {
