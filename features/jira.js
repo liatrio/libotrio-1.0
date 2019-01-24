@@ -66,7 +66,7 @@ function jira(bot, controller) {
 
     controller.hears(['get ([a-zA-Z -_]*)tickets'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
         bot.reply(message, `You need to specify a board.  Try \`get ${message.match[1]} tickets for [board]\``);
-    };
+    });
 
     controller.hears(['get ([a-zA-Z -_]*)tickets for ([a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
 
