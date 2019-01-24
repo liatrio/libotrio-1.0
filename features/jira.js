@@ -41,11 +41,10 @@ function handleBoard(bot, message) {
     }
 }
 
-function getTicketsForBoard(bot, message, boardId, status) {
+function getTicketsForBoard(bot, message, boardId, statusFilter) {
 
     console.debug(`** inside getTicketsForBoard`);
     console.log(`${JSON.stringify(message, null, 2)}`);
-    let statusFilter = status;
 
     let opts = {
         boardId: boardId,
@@ -54,7 +53,13 @@ function getTicketsForBoard(bot, message, boardId, status) {
         jql: "status in ('" + statusFilter + "')"
     };
 
-    let output = `\`${statusFilter}\` tickets for board ${boardId}`;
+    let output;
+    if(message.match[2]){
+        output = `\`${statusFilter}\` tickets for \`message.match[2]\` (ID: ${boardId})`;
+    } else{
+        output = `\`${statusFilter}\` tickets for board ${boardId}`;
+
+    }
     let ticketAttachments = [];
 
     return jiraClient.board.getIssuesForBoard(opts)
