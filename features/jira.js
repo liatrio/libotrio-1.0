@@ -98,11 +98,15 @@ function jira(bot, controller) {
             return;
         }
 
-        console.log("Checking for a board matching \`" + board + "\`");
+        console.log(`** Starting to check for board '${board}' and status '${status}'`);
 
         selectBoard(board)
             .then(response => {
                 console.log(`** Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
+                if(!status){
+                    status = 'to do'; //todo: should this be something else?
+                    console.log(`** Status was not defined, defaulting to '${status}'`);
+                }
                 return getTicketsForBoard(bot, message, response, status);
             }, rejection => {
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
