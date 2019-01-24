@@ -44,6 +44,7 @@ function handleBoard(bot, message) {
 function getTicketsForBoard(bot, message, boardId, status) {
 
     console.debug(`** inside getTicketsForBoard`);
+    console.log(`${JSON.stringify(message, null, 2)}`);
     let statusFilter = status;
 
     let opts = {
@@ -53,7 +54,7 @@ function getTicketsForBoard(bot, message, boardId, status) {
         jql: "status in ('" + statusFilter + "')"
     };
 
-    let output = `Ticket list for ${boardId}`;
+    let output = `\`${statusFilter}\` tickets for board ${boardId}`;
     let ticketAttachments = [];
 
     return jiraClient.board.getIssuesForBoard(opts)
@@ -70,19 +71,10 @@ function getTicketsForBoard(bot, message, boardId, status) {
                     };
                     let ticketAttachment = {
                         // text: `<${newTicket.t_link}|${newTicket.t_key}>: ${newTicket.t_summary} - *${newTicket.t_status}*`
-                        title: newTicket.t_summary,
-                        fields: [
-                            {
-                                title: 'Ticket',
-                                text: `<${newTicket.t_link}|${newTicket.t_key}>`,
-                                short: true
-                            },
-                            {
-                                title: 'Status',
-                                text: `${newTicket.t_status}`,
-                                short: true
-                            }
-                        ]
+                        title: newTicket.t_key,
+                        title_link: newTicket.t_link,
+                        text: newTicket.t_summary
+
                     };
                     ticketAttachments.push(ticketAttachment);
                 }
@@ -109,7 +101,7 @@ function jira(bot, controller) {
 
         selectBoard(board)
             .then(response => {
-                console.log(`Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
+                console.log(`** Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
                 return getTicketsForBoard(bot, message, response, status);
             }, rejection => {
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
