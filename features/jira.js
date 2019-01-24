@@ -39,7 +39,10 @@ function handleBoard(bot, message) {
 
 function getTicketsForBoard(bot, message, boardId) {
 
-    var opts = {
+    let statusFilter = message.original_message.attachments[0].fields[0].value || "*";
+    bot.reply(message, `statusFilter: ${statusFilter}`);
+
+    let opts = {
         boardId: boardId,
         maxResults: "9999",
         fields: ["status", "summary"],
