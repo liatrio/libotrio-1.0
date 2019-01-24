@@ -116,6 +116,8 @@ function jira(bot, controller) {
                 console.log(`** Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
                 return getTicketsForBoard(bot, message, response, status);
             }, rejection => {
+                console.log(!rejection);
+                console.log(!rejection.callback_id);
                 if (!rejection || !rejection.callback_id) {
                     console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
                 }
