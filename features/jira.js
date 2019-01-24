@@ -88,12 +88,12 @@ function jira(bot, controller) {
                 bot.reply(message, String(response));
                 return response;
             }, rejection => {
+                console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
                 rejection.attachments[0].fields = [{
                     title: 'statusFilter',
                     value: status,
                     short: true
                 }];
-                console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
                 bot.reply(message, rejection);
             });
 
