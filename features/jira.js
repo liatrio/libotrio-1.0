@@ -87,16 +87,17 @@ function jira(bot, controller) {
 
         selectBoard(board)
             .then(response => {
-                console.log(`Response: ${JSON.stringify(response, null, 2)}`);
-                bot.reply(message, String(response));
-                return response;
+                console.log(`Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
+                return getTicketsForBoard(bot, message, response);
             }, rejection => {
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
-                rejection.attachments[0].fields = [{
-                    title: 'statusFilter',
-                    value: status,
-                    short: true
-                }];
+                if (rejection.attachments) {
+                    rejection.attachments[0].fields = [{
+                        title: 'statusFilter',
+                        value: status,
+                        short: true
+                    }];
+                }
                 bot.reply(message, rejection);
             });
 
@@ -120,14 +121,13 @@ function helpMessage(bot, controller) {
 
 function selectBoard(id) {
     if (!isNaN(id)) {
-        return getTicketsForBoard(bot, message, id);
+        return Promise.resolve(id);
     } else {
 
         let getBoard = (boards, error) => {
-            console.log(`** Result of getAllBoards:\n ${JSON.stringify(boards, null, 2)}`);
             if (!error) {
-                console.log(`** Found ${boards.values.length} boards; prompting user for input`);
                 if (boards.values.length > 1) {
+                    console.log(`** Found ${boards.values.length} boards; prompting user for input`);
                     let reply_with_attachments = {
                         attachments: [{
                             text: 'Multiple boards found matching that name; please select one:',
@@ -153,10 +153,10 @@ function selectBoard(id) {
                     return Promise.reject(reply_with_attachments)
                 } else {
                     console.log(`** One board found, getting tickets for board ID ${boards.values[0].id}`);
-                    return getTicketsForBoard(bot, message, boards.values[0].id);
+                    return Promise.resolve(boards.values[0].id)
                 }
             } else {
-                console.log("Found error from API: " + JSON.stringify(error, null, 2));
+                console.log("** Found error from API: " + JSON.stringify(error, null, 2));
                 return Promise.reject(error);
             }
         };
