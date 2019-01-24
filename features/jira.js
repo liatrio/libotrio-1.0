@@ -29,12 +29,6 @@ function handleBoard(bot, message) {
     } else {
         bot.reply(message, "board not provided; check logs");
     }
-    // bot.replyInteractive(message, {
-    //     text: `Board selected: ${message.actions[0].selected_options[0].value}`,
-    //     attachments: []
-    // });
-
-
 }
 
 function getTicketsForBoard(bot, message, boardId) {
@@ -54,7 +48,7 @@ function getTicketsForBoard(bot, message, boardId) {
 
     jiraClient.board.getIssuesForBoard(opts, function (error, issues) {
         if (error) {
-            output = "There was an error: " + error;
+            output = `There was an error: \`\`\`${JSON.stringify(error)}\`\`\``;
         } else {
             for (let i = 0; i < issues.issues.length; i++) {
                 let newTicket = {
@@ -94,13 +88,11 @@ function jira(bot, controller) {
                 bot.reply(message, String(response));
                 return response;
             }, rejection => {
-                console.log(`******* BEFORE MODIFICATION *******\n${JSON.stringify(rejection, null, 2)}\n******* /BEFORE MODIFICATION *******`);
                 rejection.attachments[0].fields = [{
                     title: 'statusFilter',
                     value: status,
                     short: true
                 }];
-                console.log(`******* BEFORE SENDING *******\n${JSON.stringify(rejection, null, 2)}\n******* /BEFORE SENDING *******`);
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
                 bot.reply(message, rejection);
             });
@@ -165,7 +157,6 @@ function jira(bot, controller) {
     // receive an interactive message, and reply with a message that will replace the original
     controller.on('interactive_message_callback', function (bot, message) {
         if (message.callback_id === 'board_select') {
-            console.log(JSON.stringify(message, null, 2));
             handleBoard(bot, message);
         }
     });
