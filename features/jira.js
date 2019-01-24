@@ -53,9 +53,9 @@ function getTicketsForBoard(bot, message, boardId, statusFilter) {
     };
 
     let output;
-    if(message.match){
+    if (message.match) {
         output = `\`${statusFilter}\` tickets for \`${message.match[2]}\` (ID: ${boardId})`;
-    } else{
+    } else {
         output = `\`${statusFilter}\` tickets for board ${boardId}`;
 
     }
@@ -81,8 +81,13 @@ function getTicketsForBoard(bot, message, boardId, statusFilter) {
                 }
             }
             console.log(`${JSON.stringify(message, null, 2)}`);
-            bot.reply(message, {text: output, attachments: ticketAttachments});
-            // bot.replyInteractive(message, {text: output, attachments: ticketAttachments});
+
+            // this determines whether an existing message will be replaced or if a new message will be posted
+            if (message.type === 'interactive_message_callback') {
+                bot.replyInteractive(message, {text: output, attachments: ticketAttachments});
+            } else {
+                bot.reply(message, {text: output, attachments: ticketAttachments});
+            }
             return Promise.resolve("dummy val")
         });
 
@@ -105,7 +110,7 @@ function jira(bot, controller) {
         selectBoard(board)
             .then(response => {
                 console.log(`** Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
-                if(!status){
+                if (!status) {
                     status = 'to do'; //todo: should this be something else?
                     console.log(`** Status was not defined, defaulting to '${status}'`);
                 }
