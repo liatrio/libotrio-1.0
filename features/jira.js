@@ -70,10 +70,7 @@ function getTicketsForBoard(bot, message, boardId) {
             }
         }
         bot.reply(message, {text: output, attachments: ticketAttachments});
-    })
-        .catch(rejection => {
-            console.log(JSON.stringify(rejection));
-        });
+    });
 
 }
 
