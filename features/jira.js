@@ -104,6 +104,7 @@ function jira(bot, controller) {
     // receive an interactive message, and reply with a message that will replace the original
     controller.on('interactive_message_callback', function (bot, message) {
         if (message.callback_id === 'board_select') {
+            console.log(JSON.stringify(message, null, 2));
             handleBoard(bot, message);
         }
     });
