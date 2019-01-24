@@ -116,8 +116,12 @@ function jira(bot, controller) {
                 console.log(`** Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
                 return getTicketsForBoard(bot, message, response, status);
             }, rejection => {
-                console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
+                if (!rejection || !rejection.callback_id) {
+                    console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
+                }
                 // this is a workaround to pass the status filter through the interactive callback
+                // it doesn't seem possible to pass arbitrary values in the original_message object
+                //todo: find a way to do this that isn't visible in the slack message
                 if (rejection.attachments) {
                     rejection.attachments[0].fields = [{
                         title: 'statusFilter',
