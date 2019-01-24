@@ -80,7 +80,6 @@ function getTicketsForBoard(bot, message, boardId, statusFilter) {
                     ticketAttachments.push(ticketAttachment);
                 }
             }
-            console.log(`${JSON.stringify(message, null, 2)}`);
 
             // this determines whether an existing message will be replaced or if a new message will be posted
             if (message.type === 'interactive_message_callback') {
@@ -117,6 +116,7 @@ function jira(bot, controller) {
                 return getTicketsForBoard(bot, message, response, status);
             }, rejection => {
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
+                // this is a workaround to pass the status filter through the interactive callback
                 if (rejection.attachments) {
                     rejection.attachments[0].fields = [{
                         title: 'statusFilter',
