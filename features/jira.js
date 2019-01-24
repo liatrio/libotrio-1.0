@@ -69,7 +69,20 @@ function getTicketsForBoard(bot, message, boardId, status) {
                         t_link: `https://${jiraHost}/secure/RapidBoard.jspa?rapidView=${boardId}&modal=detail&selectedIssue=${issues.issues[i].key}`
                     };
                     let ticketAttachment = {
-                        text: `<${newTicket.t_link}|${newTicket.t_key}>: ${newTicket.t_summary} - *${newTicket.t_status}*`
+                        // text: `<${newTicket.t_link}|${newTicket.t_key}>: ${newTicket.t_summary} - *${newTicket.t_status}*`
+                        title: newTicket.t_summary,
+                        fields: [
+                            {
+                                title: 'Ticket',
+                                text: `<${newTicket.t_link}|${newTicket.t_key}>`,
+                                short: true
+                            },
+                            {
+                                title: 'Status',
+                                text: `${newTicket.t_status}`,
+                                short: true
+                            }
+                        ]
                     };
                     ticketAttachments.push(ticketAttachment);
                 }
