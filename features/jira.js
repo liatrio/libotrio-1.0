@@ -43,10 +43,8 @@ function handleBoard(bot, message) {
 
 function getTicketsForBoard(bot, message, boardId, status) {
 
-    console.log(`** inside getTicketsForBoard`);
-    console.log(`** message: \n${JSON.stringify(message, null, 2)}`);
-    let statusFilter = status; //todo: this needs refinement
-    bot.reply(message, `statusFilter: ${statusFilter}`);
+    console.debug(`** inside getTicketsForBoard`);
+    let statusFilter = status;
 
     let opts = {
         boardId: boardId,
@@ -71,7 +69,7 @@ function getTicketsForBoard(bot, message, boardId, status) {
                         t_link: `https://${jiraHost}/secure/RapidBoard.jspa?rapidView=${boardId}&modal=detail&selectedIssue=${issues.issues[i].key}`
                     };
                     let ticketAttachment = {
-                        text: `<${newTicket.t_link}|${newTicket.t_key}>:${newTicket.t_summary} - *${newTicket.t_status}*`
+                        text: `<${newTicket.t_link}|${newTicket.t_key}>: ${newTicket.t_summary} - *${newTicket.t_status}*`
                     };
                     ticketAttachments.push(ticketAttachment);
                 }
