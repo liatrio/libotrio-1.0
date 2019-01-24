@@ -59,9 +59,9 @@ function getTicketsForBoard(bot, message, boardId, status) {
     let ticketAttachments = [];
 
     return jiraClient.board.getIssuesForBoard(opts)
-        .then((error, issues) => {
+        .then((issues, error) => {
             if (error) {
-                output = `There was an error: \`\`\`${JSON.stringify(error)}\`\`\``;
+                output = `There was an error: \`\`\`\n${JSON.stringify(error)}\n\`\`\``;
             } else {
                 for (let i = 0; i < issues.issues.length; i++) {
                     let newTicket = {
