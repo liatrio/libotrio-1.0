@@ -68,7 +68,7 @@ function jira(bot, controller) {
 
         bot.reply(message, `\`\`\`${JSON.stringify(message.match, null, 2)}\`\`\``);
 
-        let status = message.match[1];
+        let status = message.match[1].trim();
         let board = message.match[2];
 
         if (!board) {
