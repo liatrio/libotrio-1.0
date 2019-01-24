@@ -52,7 +52,7 @@ function getTicketsForBoard(bot, message, boardId) {
     let output = `Ticket list for ${boardId}`;
     let ticketAttachments = [];
 
-    jira.board.getIssuesForBoard(opts, function (error, issues) {
+    jiraClient.board.getIssuesForBoard(opts, function (error, issues) {
         if (error) {
             output = "There was an error: " + error;
         } else {
@@ -70,7 +70,10 @@ function getTicketsForBoard(bot, message, boardId) {
             }
         }
         bot.reply(message, {text: output, attachments: ticketAttachments});
-    });
+    })
+        .catch(rejection => {
+            console.log(JSON.stringify(rejection));
+        });
 
 }
 
