@@ -46,25 +46,27 @@ function getTicketsForBoard(bot, message, boardId) {
     let output = `Ticket list for ${boardId}`;
     let ticketAttachments = [];
 
-    jiraClient.board.getIssuesForBoard(opts, function (error, issues) {
-        if (error) {
-            output = `There was an error: \`\`\`${JSON.stringify(error)}\`\`\``;
-        } else {
-            for (let i = 0; i < issues.issues.length; i++) {
-                let newTicket = {
-                    t_key: issues.issues[i].key,
-                    t_summary: issues.issues[i].fields.summary,
-                    t_status: issues.issues[i].fields.status.name,
-                    t_link: `https://${jiraHost}/secure/RapidBoard.jspa?rapidView=${boardId}&modal=detail&selectedIssue=${issues.issues[i].key}`
-                };
-                let ticketAttachment = {
-                    text: `<${newTicket.t_link}|${newTicket.t_key}>:${newTicket.t_summary} - *${newTicket.t_status}*`
-                };
-                ticketAttachments.push(ticketAttachment);
+    return jiraClient.board.getIssuesForBoard(opts)
+        .then((error, issues) => {
+            if (error) {
+                output = `There was an error: \`\`\`${JSON.stringify(error)}\`\`\``;
+            } else {
+                for (let i = 0; i < issues.issues.length; i++) {
+                    let newTicket = {
+                        t_key: issues.issues[i].key,
+                        t_summary: issues.issues[i].fields.summary,
+                        t_status: issues.issues[i].fields.status.name,
+                        t_link: `https://${jiraHost}/secure/RapidBoard.jspa?rapidView=${boardId}&modal=detail&selectedIssue=${issues.issues[i].key}`
+                    };
+                    let ticketAttachment = {
+                        text: `<${newTicket.t_link}|${newTicket.t_key}>:${newTicket.t_summary} - *${newTicket.t_status}*`
+                    };
+                    ticketAttachments.push(ticketAttachment);
+                }
             }
-        }
-        bot.reply(message, {text: output, attachments: ticketAttachments});
-    });
+            bot.reply(message, {text: output, attachments: ticketAttachments});
+            return Promise.resolve("dummy val")
+        });
 
 }
 
