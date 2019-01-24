@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.3.0
+* Adding feature for assigning a jira ticket to yourself and creating a feature branch
+
 ## v2.1.0
 * add birthday reminder feature skeleton
 

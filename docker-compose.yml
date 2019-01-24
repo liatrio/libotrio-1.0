@@ -5,6 +5,8 @@ services:
     volumes:
       - .:/code
     environment:
+      - JIRA_API_CREDENTIALS
+      - JIRA_HOST
       - SLACK_ACCESS_TOKEN
       - SLACK_CLIENTID
       - SLACK_CLIENTSECRET
