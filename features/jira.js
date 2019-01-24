@@ -12,8 +12,10 @@ if (!atlassianUser || !atlassianPass) {
     exit(1);
 }
 
+const jiraHost = process.env.JIRA_HOST || 'liatrio.atlassian.net';
+
 const jiraClient = new JiraClient({
-    host: 'liatrio.atlassian.net',
+    host: jiraHost,
     basic_auth: {
         username: atlassianUser,
         password: atlassianPass
@@ -21,43 +23,50 @@ const jiraClient = new JiraClient({
 });
 
 function handleBoard(bot, message) {
-    bot.replyInteractive(message, {
-        text: `Board selected: ${message.actions[0].selected_options[0].value}`,
-        attachments: []
-    });
+    let board = message.actions[0].selected_options[0].value;
+    if (board) {
+        getTicketsForBoard(bot, message, board);
+    } else {
+        bot.reply(message, "board not provided; check logs");
+    }
+    // bot.replyInteractive(message, {
+    //     text: `Board selected: ${message.actions[0].selected_options[0].value}`,
+    //     attachments: []
+    // });
+
+
 }
 
-function getTickets() {
-    var statusFilter = (msg.text.split(" ")[1] === undefined ? "to do" : msg.text.substr(msg.text.indexOf(' ') + 1).toLowerCase());
+function getTicketsForBoard(bot, message, boardId) {
 
     var opts = {
-        boardId: msg.text.split(" ")[0],
+        boardId: boardId,
         maxResults: "9999",
         fields: ["status", "summary"],
         jql: "status in ('" + statusFilter + "')"
     };
 
-    var output = "Ticket list for " + msg.text.split(" ")[0];
-    var ticketAttachments = [];
+    let output = `Ticket list for ${boardId}`;
+    let ticketAttachments = [];
 
     jira.board.getIssuesForBoard(opts, function (error, issues) {
         if (error) {
             output = "There was an error: " + error;
         } else {
-            for (var i = 0; i < issues.issues.length; i++) {
-                var newTicket = {
+            for (let i = 0; i < issues.issues.length; i++) {
+                let newTicket = {
                     t_key: issues.issues[i].key,
                     t_summary: issues.issues[i].fields.summary,
                     t_status: issues.issues[i].fields.status.name,
-                    t_link: "https://" + JIRA_HOST + "/secure/RapidBoard.jspa?rapidView=" + msg.text.split(" ")[0] + "&modal=detail&selectedIssue=" + issues.issues[i].key
+                    t_link: `https://${jiraHost}/secure/RapidBoard.jspa?rapidView=${boardId}&modal=detail&selectedIssue=${issues.issues[i].key}`
                 };
-                var ticketAttachment = {
-                    text: `<${newTicket.t_link}|${newTicket.t_key}>` + ': ' + newTicket.t_summary + " - *" + newTicket.t_status + "*"
-                }
+                let ticketAttachment = {
+                    text: `<${newTicket.t_link}|${newTicket.t_key}>:${newTicket.t_summary} - *${newTicket.t_status}*`
+                };
                 ticketAttachments.push(ticketAttachment);
             }
         }
-        bot.reply({text: output, attachments: ticketAttachments});
+        bot.reply(message, {text: output, attachments: ticketAttachments});
     });
 
 }
@@ -66,29 +75,25 @@ function jira(bot, controller) {
 
     controller.hears(['get ([a-zA-Z -_]*)tickets for ([a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
 
-        bot.reply(message, `\`\`\`${JSON.stringify(message.match, null, 2)}\`\`\``);
-
         let status = message.match[1].trim();
-        let board = message.match[2];
+        let board = message.match[2].trim();
 
         if (!board) {
             bot.reply(message, "Please specify which board you want to pull tickets from.");
             return;
         }
 
-        // let boardName = message.match[1];
-        //
-        // console.log("Checking for a board matching \`" + boardName + "\`");
-        //
-        // selectBoard(boardName)
-        //     .then(response => {
-        //         console.log(`Response: ${JSON.stringify(response, null, 2)}`);
-        //         bot.reply(message, String(response));
-        //         return response;
-        //     }, rejection => {
-        //         console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
-        //         bot.reply(message, rejection);
-        //     });
+        console.log("Checking for a board matching \`" + board + "\`");
+
+        selectBoard(board)
+            .then(response => {
+                console.log(`Response: ${JSON.stringify(response, null, 2)}`);
+                bot.reply(message, String(response));
+                return response;
+            }, rejection => {
+                console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
+                bot.reply(message, rejection);
+            });
 
     });
 
