@@ -33,7 +33,8 @@ function handleBoard(bot, message) {
 
 function getTicketsForBoard(bot, message, boardId) {
 
-    console.log(`** inside getTicketsForBoard`)
+    console.log(`** inside getTicketsForBoard`);
+    console.log(`** message: \n${JSON.stringify(message, null, 2)}`);
     let statusFilter = message.original_message.attachments[0].fields[0].value || message.attachments[0].fields[0].value || 'to do'; //todo: this needs refinement
     bot.reply(message, `statusFilter: ${statusFilter}`);
 
