@@ -80,7 +80,9 @@ function getTicketsForBoard(bot, message, boardId, statusFilter) {
                     ticketAttachments.push(ticketAttachment);
                 }
             }
+            console.log(`${JSON.stringify(message, null, 2)}`);
             bot.reply(message, {text: output, attachments: ticketAttachments});
+            // bot.replyInteractive(message, {text: output, attachments: ticketAttachments});
             return Promise.resolve("dummy val")
         });
 
