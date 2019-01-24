@@ -149,7 +149,7 @@ function selectBoard(id) {
 
                     return Promise.reject(reply_with_attachments)
                 } else {
-                    return Promise.resolve(boards.values[0].id);
+                    return getTicketsForBoard(bot, message, boards.values[0].id);
                 }
             } else {
                 console.log("Found error from API: " + JSON.stringify(error, null, 2));
