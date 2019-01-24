@@ -44,7 +44,6 @@ function handleBoard(bot, message) {
 function getTicketsForBoard(bot, message, boardId, statusFilter) {
 
     console.debug(`** inside getTicketsForBoard`);
-    console.log(`${JSON.stringify(message, null, 2)}`);
 
     let opts = {
         boardId: boardId,
