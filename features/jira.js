@@ -24,18 +24,28 @@ const jiraClient = new JiraClient({
 
 function handleBoard(bot, message) {
     let board = message.actions[0].selected_options[0].value;
+    let status;
+
+    if (message.original_message) {
+        status = message.original_message.attachments[0].fields[0].value
+    } else if (message.attachments) {
+        status = message.attachments[0].fields[0].value
+    } else {
+        status = 'to do';
+    }
+
     if (board) {
-        getTicketsForBoard(bot, message, board);
+        getTicketsForBoard(bot, message, board, status);
     } else {
         bot.reply(message, "board not provided; check logs");
     }
 }
 
-function getTicketsForBoard(bot, message, boardId) {
+function getTicketsForBoard(bot, message, boardId, status) {
 
     console.log(`** inside getTicketsForBoard`);
     console.log(`** message: \n${JSON.stringify(message, null, 2)}`);
-    let statusFilter = message.original_message.attachments[0].fields[0].value || message.attachments[0].fields[0].value || 'to do'; //todo: this needs refinement
+    let statusFilter = status; //todo: this needs refinement
     bot.reply(message, `statusFilter: ${statusFilter}`);
 
     let opts = {
@@ -89,7 +99,7 @@ function jira(bot, controller) {
         selectBoard(board)
             .then(response => {
                 console.log(`Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
-                return getTicketsForBoard(bot, message, response);
+                return getTicketsForBoard(bot, message, response, status);
             }, rejection => {
                 console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
                 if (rejection.attachments) {
