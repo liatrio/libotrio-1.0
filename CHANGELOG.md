@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.2.0
+* Minimizing Jira output
+
 ## v2.1.0
 * add birthday reminder feature skeleton
 
