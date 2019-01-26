@@ -82,6 +82,7 @@ function beerjar(bot, controller) {
   controller.hears(['^(beerjar) (.*)'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     var amount = 1.00;
     var str = message.match[2];
+    var sender_str = message.raw_message.user;
     var validUser = false;
     console.log(message)
     if (str.includes('@')) {
@@ -89,46 +90,93 @@ function beerjar(bot, controller) {
       str = str.replace('>','');
       validUser = true;
     }
+    if (sender_str.includes('@')) {
+      sender_str = sender_str.replace('<@','');
+      sender_str = sender_str.replace('>','');
+    }
+    console.log('reciever id = ' + str);
+    console.log('sender id = ' + sender_str);
     if (validUser)
     {
-      controller.storage.users.get(str, function(err, user) {
-        if (!user) {
-          bot.api.users.info({user: str}, function(err, response) {
-            if (!response.user){
+      controller.storage.users.get(str, function(err, user) 
+      {
+        if (!user) 
+        {
+          bot.api.users.info({user: str}, function(err, response) 
+          {
+            console.log("what is response.user " + response.user);
+            if (!response.user)
+            {
               bot.reply(message, "That's not a Slack user.");
             }
-            else{
+            else
+            {
               var name = response.user.profile.display_name
               console.log('Username will be set as ' + name);
-              user = {
+              user = 
+              {
                 id: str,
                 name: name
               };
-              user.beerjar = amount;
-              controller.storage.users.save(user, function(err, id) {
-                bot.reply(message, ':beers: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
-              });             
+              if (user.name == '')
+              {
+                controller.storage.users.save(user, function(err, id) 
+                {
+                  bot.reply(message, ":laughing_eyes_open: Beerjarring a bot is a bad idea");
+                });
+              }
+              else 
+              {
+                user.beerjar = amount;
+                controller.storage.users.save(user, function(err, id) 
+                {
+                  bot.reply(message, ':beers: :smiley: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
+                });
+              }             
             }
-          })
-        }
-        else {
-          if (!user.beerjar){
-            user.beerjar = amount;
-          }
-          else {
-            user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
-          }
-
-          controller.storage.users.save(user, function(err, id) {
-            bot.reply(message, ':beers: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
+           })
+         }
+         else
+         {
+           if (user.name == '')
+           {
+            controller.storage.users.get(sender_str, function(err, sender) 
+            {
+             if (!sender.beerjar)
+             {
+               sender.beerjar = amount;
+             }
+             else
+             {
+               sender.beerjar = parseFloat(parseFloat(sender.beerjar) + parseFloat(100)).toFixed(2);
+             }
+             controller.storage.users.save(sender, function(err, id) {
+              bot.reply(message, ':beers: :laughing_eyes_open: Adding $' + 100 + ' to the <@' + sender.id + '> beerjar.  Beerjar total for <@' + sender.id + '> = $' + sender.beerjar);
+            });
           });
+          }
+           else
+           {
+              if (!user.beerjar)
+              {
+                user.beerjar = amount;
+              }
+              else 
+              {
+                user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
+              }
+              controller.storage.users.save(user, function(err, id) {
+              bot.reply(message, ':beers: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
+            });
+          }
         }
-      });
-    }
-    else {
-      bot.reply(message, "Please use the *@* when beerjarring someone - Some people share the same name.");
-    }
-  });
+    });
+  }
+  else 
+  {
+    bot.reply(message, "Please use the *@* when beerjarring someone - Some people share the same name.");
+  }
+});
 
   controller.hears(['beerjar clear'], 'direct_message,direct_mention,mention', function(bot, message) {
     controller.storage.users.get(message.user, function(err, user) {
