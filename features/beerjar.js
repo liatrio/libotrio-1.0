@@ -84,6 +84,7 @@ function beerjar(bot, controller) {
     var str = message.match[2];
     var sender_str = message.raw_message.user;
     var validUser = false;
+    var i = Math.floor(Math.random() * 5);
     console.log(message)
     if (str.includes('@')) {
       str = str.replace('<@','');
@@ -160,7 +161,7 @@ function beerjar(bot, controller) {
                     user.beerjar = 100;
                     controller.storage.users.save(user, function(err,id)
                     {
-                      bot.reply(message, ':beers: :laughing_eyes_open: Adding $' + 100 + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar + " :laughing_eyes_open: :beers:");
+                      sassyReply(bot, user, message, parseInt(i));
                     });
                     }
                   });
@@ -176,7 +177,7 @@ function beerjar(bot, controller) {
                     user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(100)).toFixed(2);
                   }
                   controller.storage.users.save(user, function(err, id) {
-                    bot.reply(message, ':beers: :laughing_eyes_open: Adding $' + 100 + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar + " :laughing_eyes_open: :beers:");
+                    sassyReply(bot, user, message, parseInt(i));
                   });
                 }
               });
@@ -215,6 +216,21 @@ function beerjar(bot, controller) {
     });
   });
 }
+
+function sassyReply(bot, user, message, i)
+{
+  if (i == 0)
+    bot.reply(message, ':beers: Silly <@' + user.id + '> I am far too superior to be beerjarred :neckbeard:. Adding $100 to <@' + user.id + ">'s beerjar. New total $" + user.beerjar);
+  if (i == 1)
+    bot.reply(message, ":beers: Interesting <@" + user.id + ">, I see you'd rather have a keg than a six-pack. Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar);
+  if (i == 2)
+    bot.reply(message, ":beers: :no_entry_sign: *404 Error* :no_entry_sign: Why don't you test your luck and try again :wink: Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar);
+  if (i == 3)
+    bot.reply(message, ":beers: :partyparrot: WOOHOO :beers: on <@" + user.id + "> Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar);
+  if (i == 4)
+    bot.reply(message, ":beers: <@" + user.id + "> You have your entire life to be a jerk. Why not take today off? Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar);
+}
+
 
 function helpMessage(bot, controller) {
   return `Liatrio company beerjar.

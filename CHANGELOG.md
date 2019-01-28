@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.3.1
+* Adding in Angry Libotrio Responses
+
 ## v2.3.0
 * Adding in Angry Libotrio features
 
