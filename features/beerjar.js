@@ -96,13 +96,12 @@ function beerjar(bot, controller) {
     }
     if (validUser)
     {
-      controller.storage.users.get(str, function(err, user) 
+      controller.storage.users.get(str, function(err, user)
       {
-        if (!user) 
+        if (!user)
         {
-          bot.api.users.info({user: str}, function(err, response) 
+          bot.api.users.info({user: str}, function(err, response)
           {
-            console.log("what is response.user " + response.user);
             if (!response.user)
             {
               bot.reply(message, "That's not a Slack user.");
@@ -111,7 +110,7 @@ function beerjar(bot, controller) {
             {
               var name = response.user.profile.display_name;
               console.log('Username will be set as ' + name);
-              user = 
+              user =
               {
                 id: str,
                 name: name,
@@ -119,19 +118,19 @@ function beerjar(bot, controller) {
               };
               if (user.name == '')
               {
-                controller.storage.users.save(user, function(err, id) 
+                controller.storage.users.save(user, function(err, id)
                 {
                   bot.reply(message, ":laughing_eyes_open: Beerjarring a bot is a bad idea, dare try again. :laughing_eyes_open:");
                 });
               }
-              else 
+              else
               {
                 user.beerjar = amount;
-                controller.storage.users.save(user, function(err, id) 
+                controller.storage.users.save(user, function(err, id)
                 {
                   bot.reply(message, ':beers: :smiley: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
                 });
-              }             
+              }
             }
            })
          }
@@ -139,7 +138,7 @@ function beerjar(bot, controller) {
          {
            if (user.name == '')
            {
-            controller.storage.users.get(sender_str, function(err, user) 
+            controller.storage.users.get(sender_str, function(err, user)
             {
               if (!user)
               {
@@ -188,7 +187,7 @@ function beerjar(bot, controller) {
               {
                 user.beerjar = amount;
               }
-              else 
+              else
               {
                 user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
               }
@@ -199,7 +198,7 @@ function beerjar(bot, controller) {
           }
       });
   }
-  else 
+  else
   {
     bot.reply(message, "Please use the *@* when beerjarring someone - Some people share the same name.");
   }
