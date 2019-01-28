@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.3.0
+* Adding in Angry Libotrio features
+
 ## v2.2.0
 * Minimizing Jira output
 
