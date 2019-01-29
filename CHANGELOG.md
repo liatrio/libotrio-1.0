@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.4.0
+* Adding scaffolding for bug feature
+
 ## v2.3.0
 * Adding in Angry Libotrio features
 
