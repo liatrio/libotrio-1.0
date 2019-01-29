@@ -1,7 +1,10 @@
 # Changelog for Libotrio
 
-## v2.3.1
+## v2.4.1
 * Adding in Angry Libotrio Responses
+
+## v2.4.0
+* Adding scaffolding for bug feature
 
 ## v2.3.0
 * Adding in Angry Libotrio features
