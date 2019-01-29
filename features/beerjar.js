@@ -140,6 +140,13 @@ function beerjar(bot, controller) {
            {
             controller.storage.users.get(sender_str, function(err, user)
             {
+              var sassyResponse = [
+                ":beers: Silly <@" + user.id + "> I am far too superior to be beerjarred :neckbeard:. Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                ":beers: Interesting <@" + user.id + ">, I see you'd rather have a keg than a six-pack. Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                ":beers: :no_entry_sign: *403 Error* :no_entry_sign: Why don't you test your luck and try again :wink: Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                ":beers: :partyparrot: WOOHOO :beers: on <@" + user.id + "> Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                ":beers: <@" + user.id + "> You have your entire life to be a jerk. Why not take today off? Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar
+               ];
               if (!user)
               {
                 bot.api.users.info({user: sender_str}, function(err, response)
@@ -160,7 +167,7 @@ function beerjar(bot, controller) {
                     user.beerjar = 100;
                     controller.storage.users.save(user, function(err,id)
                     {
-                      bot.reply(message, ':beers: :laughing_eyes_open: Adding $' + 100 + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar + " :laughing_eyes_open: :beers:");
+                      bot.reply(message, sassyResponse[Math.floor(Math.random() * sassyResponse.length)]);
                     });
                     }
                   });
@@ -176,7 +183,7 @@ function beerjar(bot, controller) {
                     user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(100)).toFixed(2);
                   }
                   controller.storage.users.save(user, function(err, id) {
-                    bot.reply(message, ':beers: :laughing_eyes_open: Adding $' + 100 + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar + " :laughing_eyes_open: :beers:");
+                    bot.reply(message, sassyResponse[Math.floor(Math.random() * sassyResponse.length)]);
                   });
                 }
               });
