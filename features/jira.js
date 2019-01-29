@@ -54,7 +54,7 @@ function buildIssueAttachment(issue) {
 
   return {
     color: '#36a64f',
-    text: `<${ticketLink}|${issue.key}>` + ": " + issue.fields.summary + " - *" + issue.fields.status.name + "*"
+    text: `<${ticketLink}|${issue.key}>` + ": `" + issue.fields.status.name + "` " + issue.fields.summary
     /*
     title: issue.key,
     title_link: ticketLink,
