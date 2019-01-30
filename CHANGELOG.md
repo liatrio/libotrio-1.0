@@ -1,5 +1,9 @@
 # Changelog for Libotrio
 
+## v2.4.3
+* Add bug creator interaction 
+* create Jira Ticket function in bug feature
+
 ## v2.4.2
 * Fixing Beerjar not correctly displaying users Beerjar
 * Reformatting of Jira feature output
