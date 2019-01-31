@@ -16,6 +16,7 @@ module.exports = {
   'promote': !!process.env.JENKINS_USER,
   'saveit': !!process.env.ATLASSIAN_USER,
   'shutdown': true,
+  'user': true,
   'whoami': true,
   'yt-search': false, //!!process.env.GOOGLE_API_KEY,
   'remind': true,

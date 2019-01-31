@@ -1,5 +1,9 @@
 # Changelog for Libotrio
 
+## v2.5.0
+* Add User feature
+* create user initialization feature
+
 ## v2.4.3
 * Add bug creator interaction 
 * create Jira Ticket function in bug feature
