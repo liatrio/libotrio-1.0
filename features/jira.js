@@ -54,6 +54,8 @@ function buildIssueAttachment(issue) {
 
   return {
     color: '#36a64f',
+    text: `<${ticketLink}|${issue.key}>` + ": `" + issue.fields.status.name + "` " + issue.fields.summary
+    /*
     title: issue.key,
     title_link: ticketLink,
     fallback: `${issue.key}: ${issue.fields.summary} (${ticketLink})`,
@@ -83,6 +85,7 @@ function buildIssueAttachment(issue) {
         short: true,
       },
     ],
+    */
   };
 }
 

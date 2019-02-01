@@ -82,6 +82,7 @@ function beerjar(bot, controller) {
   controller.hears(['^(beerjar) (.*)'], 'direct_message,direct_mention,mention,ambient', function(bot, message) {
     var amount = 1.00;
     var str = message.match[2];
+    var sender_str = message.raw_message.user;
     var validUser = false;
     console.log(message)
     if (str.includes('@')) {
@@ -89,46 +90,133 @@ function beerjar(bot, controller) {
       str = str.replace('>','');
       validUser = true;
     }
+    if (sender_str.includes('@')) {
+      sender_str = sender_str.replace('<@','');
+      sender_str = sender_str.replace('>','');
+    }
     if (validUser)
     {
-      controller.storage.users.get(str, function(err, user) {
-        if (!user) {
-          bot.api.users.info({user: str}, function(err, response) {
-            if (!response.user){
+      controller.storage.users.get(str, function(err, user)
+      {
+        if (!user)
+        {
+          bot.api.users.info({user: str}, function(err, response)
+          {
+            if (!response.user)
+            {
               bot.reply(message, "That's not a Slack user.");
             }
-            else{
-              var name = response.user.profile.display_name
+            else
+            {
+              var name = response.user.profile.display_name;
               console.log('Username will be set as ' + name);
-              user = {
+              user =
+              {
                 id: str,
-                name: name
+                name: name,
+                beerjar: 0
               };
-              user.beerjar = amount;
+              if (user.name == '')
+              {
+                controller.storage.users.save(user, function(err, id)
+                {
+                  bot.reply(message, ":laughing_eyes_open: Beerjarring a bot is a bad idea, dare try again. :laughing_eyes_open:");
+                });
+              }
+              else
+              {
+                user.beerjar = amount;
+                controller.storage.users.save(user, function(err, id)
+                {
+                  bot.reply(message, ':beers: :smiley: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
+                });
+              }
+            }
+           })
+         }
+         else
+         {
+           if (user.name == '')
+           {
+            controller.storage.users.get(sender_str, function(err, user)
+            {
+              if (!user)
+              {
+                bot.api.users.info({user: sender_str}, function(err, response)
+                {
+                  if (!response.user)
+                  {
+                    bot.reply(message, "Could not find slack user.");
+                  }
+                  else
+                  {
+                    var sender_name = response.user.profile.display_name;
+                    console.log('Sender name is ' + sender_name);
+                    user =
+                    {
+                      id: sender_str,
+                      name: sender_name
+                    };
+                    user.beerjar = 100;
+                    var sassyResponse = [
+                      ":beers: Silly <@" + user.id + "> I am far too superior to be beerjarred :neckbeard:. Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                      ":beers: Interesting <@" + user.id + ">, I see you'd rather have a keg than a six-pack. Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                      ":beers: :no_entry_sign: *403 Error* :no_entry_sign: Why don't you test your luck and try again :wink: Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                      ":beers: :partyparrot: WOOHOO :beers: on <@" + user.id + "> Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                      ":beers: <@" + user.id + "> You have your entire life to be a jerk. Why not take today off? Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar
+                     ];
+                    controller.storage.users.save(user, function(err,id)
+                    {
+                      bot.reply(message, sassyResponse[Math.floor(Math.random() * sassyResponse.length)]);
+                    });
+                    }
+                  });
+                }
+                else
+                {
+                  if (!user.beerjar)
+                  {
+                    user.beerjar = amount;
+                  }
+                  else
+                  {
+                    user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(100)).toFixed(2);
+                  }
+                  var sassyResponse = [
+                    ":beers: Silly <@" + user.id + "> I am far too superior to be beerjarred :neckbeard:. Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                    ":beers: Interesting <@" + user.id + ">, I see you'd rather have a keg than a six-pack. Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                    ":beers: :no_entry_sign: *403 Error* :no_entry_sign: Why don't you test your luck and try again :wink: Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                    ":beers: :partyparrot: WOOHOO :beers: on <@" + user.id + "> Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar,
+                    ":beers: <@" + user.id + "> You have your entire life to be a jerk. Why not take today off? Adding $100 to <@" + user.id + ">'s beerjar. New total $" + user.beerjar
+                   ];
+                  controller.storage.users.save(user, function(err, id) {
+                    bot.reply(message, sassyResponse[Math.floor(Math.random() * sassyResponse.length)]);
+                  });
+                }
+              });
+            }
+            else
+            {
+              if (!user.beerjar)
+              {
+                user.beerjar = amount;
+              }
+              else
+              {
+                user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
+              }
               controller.storage.users.save(user, function(err, id) {
                 bot.reply(message, ':beers: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
-              });             
+              });
             }
-          })
-        }
-        else {
-          if (!user.beerjar){
-            user.beerjar = amount;
           }
-          else {
-            user.beerjar = parseFloat(parseFloat(user.beerjar) + parseFloat(amount)).toFixed(2);
-          }
-
-          controller.storage.users.save(user, function(err, id) {
-            bot.reply(message, ':beers: Adding $' + amount + ' to the <@' + user.id + '> beerjar.  Beerjar total for <@' + user.id + '> = $' + user.beerjar);
-          });
-        }
       });
-    }
-    else {
-      bot.reply(message, "Please use the *@* when beerjarring someone - Some people share the same name.");
-    }
-  });
+  }
+  else
+  {
+    bot.reply(message, "Please use the *@* when beerjarring someone - Some people share the same name.");
+  }
+});
 
   controller.hears(['beerjar clear'], 'direct_message,direct_mention,mention', function(bot, message) {
     controller.storage.users.get(message.user, function(err, user) {
