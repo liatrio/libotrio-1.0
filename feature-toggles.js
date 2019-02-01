@@ -18,6 +18,7 @@ module.exports = {
   'shutdown': true,
   'user': true,
   'whoami': true,
+  'closeTicket': true,
   'yt-search': false, //!!process.env.GOOGLE_API_KEY,
   'remind': true,
   'takeTicket': true,

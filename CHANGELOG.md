@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.7.0
+* Adding feature for closing a ticket inside Jira
+
 ## v2.6.0
 * Adding feature for assigning a jira ticket to yourself and creating a feature branch
 
