@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.6.0
+* Adding feature for assigning a jira ticket to yourself and creating a feature branch
+
 ## v2.5.0
 * Add User feature
 * create user initialization feature
