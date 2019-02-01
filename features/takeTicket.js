@@ -11,7 +11,7 @@ function takeTicket(bot, controller) {
       var JIRA_CREDS = process.env.JIRA_API_CREDENTIALS;
       var jira = new JiraClient( {
         host: process.env.JIRA_HOST,
-        protocol: "http",
+        protocol: process.env.JIRA_PROTOCOL,
         basic_auth: {
           username: JIRA_CREDS.split(":")[0],
           password: JIRA_CREDS.split(":")[1]
@@ -23,6 +23,8 @@ function takeTicket(bot, controller) {
         method: 'GET', url: 'https://liatrio.slack.com/api/users.list',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': auth }
       };
+      console.log(JIRA_CREDS);
+      console.log(auth);
       request(options, function(error, response, body) {
         if (!error && response.statusCode == 200) {
           const list = JSON.parse(body);
