@@ -1,123 +1,205 @@
 // Matches Jira tickets in messages and links to the jira ticket.
 
-const request = require('request');
-const async = require('async');
+const JiraClient = require('jira-connector');
 
-const jiraApiUrl = 'https://liatrio.atlassian.net/rest/api/2';
+
 const atlassianUser = process.env.ATLASSIAN_USER;
 const atlassianPass = process.env.ATLASSIAN_PASS;
 
+
 if (!atlassianUser || !atlassianPass) {
-  console.error('ERR: Jira feature requires ATLASSIAN_USER and ATLASSIAN_PASS envars.');
-  exit(1);
+    console.error('ERR: Jira feature requires ATLASSIAN_USER and ATLASSIAN_PASS env vars.');
+    exit(1);
 }
 
-// Queries the Jira REST api with with the given endpoint, method, and body.
-// Invokes cb function on completion with `error`, `response`, and `body`
-// parameters.
-function queryJira({method, endpoint, body}, cb) {
-  return request({
-    url: jiraApiUrl + endpoint,
-    method: method,
-    body: body,
-    json: true,
-    auth: {
-      user: atlassianUser,
-      pass: atlassianPass,
-    },
-  }, cb);
+//const jiraHost = process.env.JIRA_HOST || 'liatrio.atlassian.net';
+const jiraHost = 'liatrio.atlassian.net';
+
+const jiraClient = new JiraClient({
+    host: jiraHost,
+    basic_auth: {
+        username: atlassianUser,
+        password: atlassianPass
+    }
+});
+
+function handleBoard(bot, message) {
+    let board = message.actions[0].selected_options[0].value;
+    let status;
+
+    if (message.original_message) {
+        status = message.original_message.attachments[0].fields[0].value
+    } else if (message.attachments) {
+        status = message.attachments[0].fields[0].value
+    } else {
+        status = 'to do';
+    }
+
+    if (board) {
+        getTicketsForBoard(bot, message, board, status);
+    } else {
+        bot.reply(message, "board not provided; check logs");
+    }
 }
 
-// Retrieves an issue form the Jira REST api.
-// Invokes cb function on completion with `error` and `body` parameters.
-function getIssue(key, cb) {
-  let options = {
-    method: 'GET',
-    endpoint: '/issue/' + key,
-  };
-  queryJira(options, (error, response, body) => {
-    cb(error, body);
-  });
-}
+function getTicketsForBoard(bot, message, boardId, statusFilter) {
 
-// Builds a slack message attachment for the given issue
-// (returned form `getIssue`).
-function buildIssueAttachment(issue) {
-  let ticketLink = `https://liatrio.atlassian.net/browse/${issue.key}`;
-  let created = new Date(issue.fields.created);
-  let formattedCreated = `${created.getMonth()+1}/${created.getDate()}/${created.getFullYear()}`;
+    console.debug(`** inside getTicketsForBoard`);
 
-  issue.fields.summary = issue.fields.summary || 'N/A'
-  issue.fields.status = issue.fields.status || 'N/A'
-  issue.fields.reporter = issue.fields.reporter || { name: 'N/A' }
-  issue.fields.assignee = issue.fields.assignee || { name: 'N/A' }
+    let opts = {
+        boardId: boardId,
+        maxResults: "9999",
+        fields: ["status", "summary"],
+        jql: "status in ('" + statusFilter + "')"
+    };
 
-  return {
-    color: '#36a64f',
-    text: `<${ticketLink}|${issue.key}>` + ": `" + issue.fields.status.name + "` " + issue.fields.summary
-    /*
-    title: issue.key,
-    title_link: ticketLink,
-    fallback: `${issue.key}: ${issue.fields.summary} (${ticketLink})`,
-    fields: [
-      {
-        title: 'Summary',
-        value: issue.fields.summary,
-      },
-      {
-        title: 'Status',
-        value: issue.fields.status.name,
-        short: true,
-      },
-      {
-        title: 'Created',
-        value: formattedCreated,
-        short: true,
-      },
-      {
-        title: 'Reporter',
-        value: issue.fields.reporter.name,
-        short: true,
-      },
-      {
-        title: 'Assignee',
-        value: issue.fields.assignee.name,
-        short: true,
-      },
-    ],
-    */
-  };
+    let output;
+    if (message.match) {
+        output = `\`${statusFilter}\` tickets for \`${message.match[2]}\` (ID: ${boardId})`;
+    } else {
+        output = `\`${statusFilter}\` tickets for board ${boardId}`;
+
+    }
+    let ticketAttachments = [];
+
+    return jiraClient.board.getIssuesForBoard(opts)
+        .then((issues, error) => {
+            if (error) {
+                output = `There was an error: \`\`\`\n${JSON.stringify(error)}\n\`\`\``;
+            } else {
+                for (let i = 0; i < issues.issues.length; i++) {
+                    let newTicket = {
+                        t_key: issues.issues[i].key,
+                        t_summary: issues.issues[i].fields.summary,
+                        t_status: issues.issues[i].fields.status.name,
+                        t_link: `https://${jiraHost}/secure/RapidBoard.jspa?rapidView=${boardId}&modal=detail&selectedIssue=${issues.issues[i].key}`
+                    };
+                    let ticketAttachment = {
+                        text: `<${newTicket.t_link}|${newTicket.t_key}>: ${newTicket.t_summary}`
+
+                    };
+                    ticketAttachments.push(ticketAttachment);
+                }
+            }
+
+            // this determines whether an existing message will be replaced or if a new message will be posted
+            if (message.type === 'interactive_message_callback') {
+                bot.replyInteractive(message, {text: output, attachments: ticketAttachments});
+            } else {
+                bot.reply(message, {text: output, attachments: ticketAttachments});
+            }
+            return Promise.resolve("dummy val")
+        });
+
 }
 
 function jira(bot, controller) {
-  if (!(atlassianUser && atlassianPass)) {
-    console.error('ERR: Jira feature requires ATLASSIAN_USER and ATLASSIAN_PASS envars.');
-    return;
-  }
 
-  controller.hears(['([a-zA-Z]+[a-zA-Z0-9_]*-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
-    let ticketKeys = message.text.match(/([A-Z0-9_]+-[0-9]+)/gi).map((m) => m.toUpperCase());
-    async.map(ticketKeys, getIssue, (error, issues) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-      let matchedIssues = issues.filter((issue) => !('errorMessages' in issue));
-      let attachments = matchedIssues.map(buildIssueAttachment);
-      if (attachments) {
-        bot.reply(message, {attachments});
-      }
+    controller.hears(['get ([a-zA-Z -_]*)tickets for ([a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
+
+        let status = message.match[1].trim();
+        let board = message.match[2].trim();
+
+        if (!board) {
+            bot.reply(message, "Please specify which board you want to pull tickets from.");
+            return;
+        }
+
+        if (!status) {
+            status = 'to do'; //todo: should this be something else?
+            console.log(`** Status was not defined, defaulting to '${status}'`);
+        }
+
+        console.log(`** Starting to check for board '${board}' and status '${status}'`);
+
+        selectBoard(board)
+            .then(response => {
+                console.log(`** Response from selectBoard: ${JSON.stringify(response, null, 2)}`);
+                return getTicketsForBoard(bot, message, response, status);
+            }, rejection => {
+                if (rejection.attachments && rejection.attachments[0].callback_id !== 'board_select') {
+                    console.log(`Rejection: ${JSON.stringify(rejection, null, 2)}`);
+                }
+                // this is a workaround to pass the status filter through the interactive callback
+                // it doesn't seem possible to pass arbitrary values in the original_message object
+                //todo: find a way to do this that isn't visible in the slack message
+                if (rejection.attachments) {
+                    rejection.attachments[0].fields = [{
+                        title: 'statusFilter',
+                        value: status,
+                        short: true
+                    }];
+                }
+                bot.reply(message, rejection);
+            });
+
     });
-  });
+
+    controller.hears(['get ([a-zA-Z -_]*)tickets'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
+        bot.reply(message, `You need to specify a board. Try \`get ${message.match[1]}tickets for [board]\``);
+    });
+
+    // receive an interactive message, and reply with a message that will replace the original
+    controller.on('interactive_message_callback', function (bot, message) {
+        if (message.callback_id === 'board_select') {
+            handleBoard(bot, message);
+        }
+    });
 }
 
 function helpMessage(bot, controller) {
-  return `Look up and display Jira ticket details.
-Include a ticket key (such as \`LIB-3\`) in your slack message.`;
+    return "todo";
+}
+
+function selectBoard(id) {
+    if (!isNaN(id)) {
+        return Promise.resolve(id);
+    } else {
+
+        let getBoard = (boards, error) => {
+            if (!error) {
+                if (boards.values.length > 1) {
+                    console.log(`** Found ${boards.values.length} boards; prompting user for input`);
+                    let reply_with_attachments = {
+                        attachments: [{
+                            text: 'Multiple boards found matching that name; please select one:',
+                            callback_id: 'board_select',
+                            actions: [
+                                {
+                                    name: 'board_select',
+                                    text: 'Please select one',
+                                    type: 'select',
+                                    options: []
+                                }
+                            ]
+                        }]
+                    };
+
+                    boards.values.forEach((board) => {
+                        reply_with_attachments.attachments[0].actions[0].options.push({
+                            text: board.name,
+                            value: board.id
+                        });
+                    });
+
+                    return Promise.reject(reply_with_attachments)
+                } else {
+                    console.log(`** One board found, getting tickets for board ID ${boards.values[0].id}`);
+                    return Promise.resolve(boards.values[0].id)
+                }
+            } else {
+                console.log("** Found error from API: " + JSON.stringify(error, null, 2));
+                return Promise.reject(error);
+            }
+        };
+
+        return jiraClient.board.getAllBoards({name: id}).then(getBoard);
+    }
+
 }
 
 module.exports = {
-  feature: jira,
-  helpMessage,
+    feature: jira,
+    helpMessage,
 };
 
