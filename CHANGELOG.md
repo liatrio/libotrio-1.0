@@ -1,5 +1,8 @@
 # Changelog for Libotrio
 
+## v2.7.1
+* Fixing collision between jira feature and takeTicket and closeTicket features
+
 ## v2.7.0
 * Adding feature for closing a ticket inside Jira
 
