@@ -23,13 +23,13 @@ function takeTicket(bot, controller) {
         method: 'GET', url: 'https://liatrio.slack.com/api/users.list',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': auth }
       };
-      console.log(JIRA_CREDS);
-      console.log(auth);
       request(options, function(error, response, body) {
         if (!error && response.statusCode == 200) {
           const list = JSON.parse(body);
           for (var i = 0; i < list.members.length; i++){
             if (list.members[i].id == message.user){
+              console.log(message.user);
+              console.log(key);
               jira.issue.assignIssue({ issueKey: key, assignee: list.members[i].profile.email.split("@")[0]}, function(error, issue) {
                 if (error) { bot.reply(message, 'Oops! Something went wrong.'); console.log(error); }
                 else {
