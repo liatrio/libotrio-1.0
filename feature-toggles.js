@@ -11,7 +11,7 @@ module.exports = {
   'bug': true,
   'echo': true,
   'greet': true,
-  'jira': !!process.env.ATLASSIAN_USER,
+  'jira': false,//!!process.env.ATLASSIAN_USER,
   'joke': true,
   'promote': !!process.env.JENKINS_USER,
   'saveit': !!process.env.ATLASSIAN_USER,
