@@ -95,20 +95,20 @@ function jira(bot, controller) {
     return;
   }
 
-  controller.hears(['([a-zA-Z]+[a-zA-Z0-9_]*-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
-    let ticketKeys = message.text.match(/([A-Z0-9_]+-[0-9]+)/gi).map((m) => m.toUpperCase());
-    async.map(ticketKeys, getIssue, (error, issues) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-      let matchedIssues = issues.filter((issue) => !('errorMessages' in issue));
-      let attachments = matchedIssues.map(buildIssueAttachment);
-      if (attachments) {
-        bot.reply(message, {attachments});
-      }
-    });
-  });
+  //controller.hears(['([a-zA-Z]+[a-zA-Z0-9_]*-[0-9]+)'], ['direct_message', 'mention', 'direct_mention', 'ambient'], function(bot, message) {
+  //  let ticketKeys = message.text.match(/([A-Z0-9_]+-[0-9]+)/gi).map((m) => m.toUpperCase());
+  //  async.map(ticketKeys, getIssue, (error, issues) => {
+  //    if (error) {
+  //      console.error(error);
+  //      return;
+  //    }
+  //    let matchedIssues = issues.filter((issue) => !('errorMessages' in issue));
+  //    let attachments = matchedIssues.map(buildIssueAttachment);
+  //    if (attachments) {
+  //      bot.reply(message, {attachments});
+  //    }
+  //  });
+  //});
 }
 
 function helpMessage(bot, controller) {
