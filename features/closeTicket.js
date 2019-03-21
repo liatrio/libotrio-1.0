@@ -7,7 +7,7 @@ function closeTicket(bot, controller) {
       bot.reply(message, "Please specify a ticket.");
     }
     else {
-      var JIRA_CREDS = process.env.JIRA_API_CREDENTIALS;
+      var JIRA_CREDS = process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS;
       var JiraClient = require('jira-connector');
       var key = message.match[1];
 

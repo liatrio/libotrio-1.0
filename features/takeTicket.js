@@ -8,7 +8,7 @@ function takeTicket(bot, controller) {
       const request = require('request');
       var JiraClient = require('jira-connector');
 
-      var JIRA_CREDS = process.env.JIRA_API_CREDENTIALS;
+      var JIRA_CREDS = process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS;
       var jira = new JiraClient( {
         host: process.env.JIRA_HOST,
         protocol: process.env.JIRA_PROTOCOL,
@@ -36,7 +36,7 @@ function takeTicket(bot, controller) {
                   jira.issue.getIssue({ issueKey: key}, function(error, is) {
                     if (error) { bot.reply(message, 'Oops! Something went wrong.'); console.log(error); }
                     else {
-                      var bitbucketUrl = "http://" + JIRA_CREDS + "@bitbucket.liatr.io/rest/api/1.0/"
+                      var bitbucketUrl = process.env.JIRA_PROTOCOL + "://" + process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS + "@" + process.env.BITBUCKET_HOST + "/rest/api/1.0/"
                       request({url: bitbucketUrl + `projects/${is.fields.project.key}/repos`}, function(err, res, bod) {
                         var actions = [];
                         var callbacks = [];
@@ -47,7 +47,7 @@ function takeTicket(bot, controller) {
                           var callback = { 
                             pattern: `${repos.values[i].slug}`, 
                             callback: function(reply, convo) { 
-                              bitbucketUrl = "http://" + process.env.JIRA_API_CREDENTIALS + "@bitbucket.liatr.io/rest/branch-utils/1.0/"
+                              bitbucketUrl = process.env.JIRA_PROTOCOL + "://" + process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS + "@" + process.env.BITBUCKET_HOST + "/rest/branch-utils/1.0/"
                               var branch = key + "-" + is.fields.description.replace(/ /g, "-");
                               var postData = {
                                 name: branch,

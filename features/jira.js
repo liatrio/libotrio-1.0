@@ -95,7 +95,7 @@ function getTicketsForBoard(bot, message, boardId, statusFilter) {
 
 function jira(bot, controller) {
 
-    controller.hears(['get ([a-zA-Z -_]*)tickets for ([a-zA-Z0-9_]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
+    controller.hears(['get ([a-zA-Z -_]*)tickets for ([a-zA-Z0-9 _]*)'], ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
 
         let status = message.match[1].trim();
         let board = message.match[2].trim();
