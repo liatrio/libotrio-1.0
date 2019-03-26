@@ -11,6 +11,8 @@ services:
       - PORT
       - JIRA_HOST
       - JIRA_PROTOCOL
+      - BITBUCKET_HOST
+      - BITBUCKET_PROTOCOL
       - SLACK_ACCESS_TOKEN
       - SLACK_CLIENTID
       - SLACK_CLIENTSECRET

@@ -1,3 +1,8 @@
+if (!process.env.ATLASSIAN_USER || !process.env.ATLASSIAN_PASS) {
+    console.error('ERR: Jira take ticket feature requires ATLASSIAN_USER and ATLASSIAN_PASS env vars.');
+    exit(1);
+}
+
 function takeTicket(bot, controller) {
 
   controller.hears(['assign-me (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
@@ -36,7 +41,7 @@ function takeTicket(bot, controller) {
                   jira.issue.getIssue({ issueKey: key}, function(error, is) {
                     if (error) { bot.reply(message, 'Oops! Something went wrong.'); console.log(error); }
                     else {
-                      var bitbucketUrl = process.env.JIRA_PROTOCOL + "://" + process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS + "@" + process.env.BITBUCKET_HOST + "/rest/api/1.0/"
+                      var bitbucketUrl = process.env.BITBUCKET_PROTOCOL + "://" + process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS + "@" + process.env.BITBUCKET_HOST + "/rest/api/1.0/"
                       request({url: bitbucketUrl + `projects/${is.fields.project.key}/repos`}, function(err, res, bod) {
                         var actions = [];
                         var callbacks = [];
@@ -47,7 +52,7 @@ function takeTicket(bot, controller) {
                           var callback = { 
                             pattern: `${repos.values[i].slug}`, 
                             callback: function(reply, convo) { 
-                              bitbucketUrl = process.env.JIRA_PROTOCOL + "://" + process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS + "@" + process.env.BITBUCKET_HOST + "/rest/branch-utils/1.0/"
+                              bitbucketUrl = process.env.BITBUCKET_PROTOCOL + "://" + process.env.ATLASSIAN_USER + ":" + process.env.ATLASSIAN_PASS + "@" + process.env.BITBUCKET_HOST + "/rest/branch-utils/1.0/"
                               var branch = key + "-" + is.fields.description.replace(/ /g, "-");
                               var postData = {
                                 name: branch,
@@ -58,7 +63,7 @@ function takeTicket(bot, controller) {
                                        method: 'post', body: postData}, function(err, res, bod) {
                                 if (error) { console.log(err); }
                                 else { 
-                                  var link = "http://bitbucket.liatr.io/projects/" + key.split("-")[0] + "/repos/" + "pipeline-demo-application" + "/browse"
+                                  var link = process.env.BITBUCKET_PROTOCOL + "://" + process.env.BITBUCKET_HOST + "/projects/" + key.split("-")[0] + "/repos/" + "pipeline-demo-application" + "/browse"
                                   convo.say(`branch has been made on the repo <${link}|${reply.text}>` + " with the branch name `" + branch + "`"); 
                                   convo.next(); 
                                 }
