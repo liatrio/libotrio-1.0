@@ -48,7 +48,7 @@ function takeTicket(bot, controller) {
 
           for (var i = 0; i < users.members.length; i++){
             if (users.members[i].id == message.user){
-              assignTicket(bot, message, key, users.members[i].profile.email.split("@")[0])
+              //assignTicket(bot, message, key, users.members[i].profile.email.split("@")[0])
 
               jiraClient.issue.getIssue({ issueKey: key}, function(error, is) {
                 if (error) { bot.reply(message, 'Oops! Something went wrong.'); console.log(error); }
@@ -68,6 +68,18 @@ function takeTicket(bot, controller) {
                     // Repo does not exist on bitbucket
                     if (repos.errors) {
                       // Implement github repo check here
+                      var githubOrg = "liatrio"
+                      var githubUrl = "https://api." + process.env.GITHUB_URL + "/orgs/" + githubOrg + "/repos"
+                      request({url: githubUrl}, function(err, res, bod) {
+                        repos = JSON.parse(bod);
+                        for (repo in repos) {
+                          var action = { type: "button", name: `repo.name`, text: `repo.name`, value: `repo.name` }
+                          // Post request for branch creation goes here
+
+                          actions.push(action);
+                          callbacks.push(callback);
+                        }
+                      })
                       console.log("Repo does not exist for project " + is.fields.project.key)
                     }  else {
                       // Repo exists on bitbucket
@@ -98,6 +110,7 @@ function takeTicket(bot, controller) {
                         actions.push(action);
                         callbacks.push(callback);
                       }
+                    }
                       var callback = {
                         default: true,
                         callback: function(reply, convo) {
@@ -118,7 +131,6 @@ function takeTicket(bot, controller) {
                       bot.startConversation(message, function(err, convo) {
                         convo.ask(msg, callbacks);
                       });
-                    }
                   });
                 }
               });
