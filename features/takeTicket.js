@@ -26,10 +26,6 @@ const options = {
 };
 
 function assignTicket(bot, message, key, user) {
-  console.log("Key: " + key)
-  console.log("User: " + user)
-  if (user == "alexn")
-    user = "K195875"
   jiraClient.issue.assignIssue({ issueKey: key, assignee: user}, function(error, issue) {
     if (error) {
       bot.reply(message, 'Oops! Something went wrong.');
@@ -52,7 +48,7 @@ function takeTicket(bot, controller) {
 
           for (var i = 0; i < users.members.length; i++){
             if (users.members[i].id == message.user){
-              //assignTicket(bot, message, key, users.members[i].profile.email.split("@")[0])
+              assignTicket(bot, message, key, users.members[i].profile.email.split("@")[0])
 
               jiraClient.issue.getIssue({ issueKey: key}, function(error, is) {
                 if (error) { bot.reply(message, 'Oops! Something went wrong.'); console.log(error); }
