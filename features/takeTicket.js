@@ -34,6 +34,33 @@ function assignTicket(bot, message, key, user) {
   });
 }
 
+function callActions(bot, message, actions, callbacks) {
+  var callback = {
+    default: true,
+    callback: function(reply, convo) {
+      console.log(reply);
+      convo.say('cool stuff!');
+    }
+  }
+  callbacks.push(callback);
+
+  if (actions.length > 0) {
+    let msg = {
+      text: "Issue has been assigned to you. Want to create a branch?",
+      attachments: [{
+        fallback: 'actions',
+        callback_id: "take_ticket_callback",
+        actions: actions
+      }]
+    };
+    bot.startConversation(message, function(err, convo) {
+      convo.ask(msg, callbacks);
+    });
+  } else {
+    console.log("No potential repos found. Not prompting to create branch")
+  }
+}
+
 function takeTicket(bot, controller) {
 
   controller.hears(['assign-me (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
@@ -68,19 +95,18 @@ function takeTicket(bot, controller) {
                     // Repo does not exist on bitbucket
                     if (repos.errors) {
                       // Implement github repo check here
-                      var githubOrg = "liatrio"
-                      var githubUrl = "https://api." + process.env.GITHUB_URL + "/orgs/" + githubOrg + "/repos"
-                      request({url: githubUrl}, function(err, res, bod) {
-                        repos = JSON.parse(bod);
-                        for (repo in repos) {
-                          var action = { type: "button", name: `repo.name`, text: `repo.name`, value: `repo.name` }
-                          // Post request for branch creation goes here
+                      console.log("Checking github org...");
+                      var githubUrl = "https://api." + process.env.GITHUB_URL + "/orgs/" + process.env.GITHUB_ORG + "/repos"
+                      request({url: githubUrl, method: 'GET', headers: {'User-Agent': process.env.GITHUB_USER}}, function(err, res, bod) {
+                        var repos = JSON.parse(bod)
+                        for (var repo in repos) {
+                          var repoName = repos[repo].name
+                          var action = { type: "button", name: repoName, text: repoName, value: repoName }
 
                           actions.push(action);
-                          callbacks.push(callback);
                         }
+                        callActions(bot, message, actions, callbacks)
                       })
-                      console.log("Repo does not exist for project " + is.fields.project.key)
                     }  else {
                       // Repo exists on bitbucket
                       for (var i = 0; i < repos.values.length; i++){
@@ -110,27 +136,8 @@ function takeTicket(bot, controller) {
                         actions.push(action);
                         callbacks.push(callback);
                       }
+                      callActions(bot, message, actions, callbacks)
                     }
-                      var callback = {
-                        default: true,
-                        callback: function(reply, convo) {
-                          console.log(reply);
-                          convo.say('cool stuff!');
-                        }
-                      }
-                      callbacks.push(callback);
-
-                      let msg = {
-                        text: "Issue has been assigned to you. Want to create a branch?",
-                        attachments: [{
-                          fallback: 'actions',
-                          callback_id: "take_ticket_callback",
-                          actions: actions
-                        }]
-                      };
-                      bot.startConversation(message, function(err, convo) {
-                        convo.ask(msg, callbacks);
-                      });
                   });
                 }
               });
