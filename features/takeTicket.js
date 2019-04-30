@@ -75,7 +75,7 @@ function takeTicket(bot, controller) {
 
           for (var i = 0; i < users.members.length; i++){
             if (users.members[i].id == message.user){
-              //assignTicket(bot, message, key, users.members[i].profile.email.split("@")[0])
+              assignTicket(bot, message, key, users.members[i].profile.email.split("@")[0])
 
               jiraClient.issue.getIssue({ issueKey: key}, function(error, is) {
                 if (error) { bot.reply(message, 'Oops! Something went wrong.'); console.log(error); }
@@ -86,7 +86,7 @@ function takeTicket(bot, controller) {
                   request({url: bitbucketUrl}, function(err, res, bod) {
                     if (err) {
                       bot.reply(message, 'Oops! Something went wrong.');
-                      console.log(error);
+                      console.log(err);
                     }
                     var actions = [];
                     var callbacks = [];
@@ -94,7 +94,6 @@ function takeTicket(bot, controller) {
 
                     // Repo does not exist on bitbucket
                     if (repos.errors) {
-                      // Implement github repo check here
                       console.log("Checking github org...");
                       var githubUrl = "https://api." + process.env.GITHUB_URL + "/orgs/" + process.env.GITHUB_ORG + "/repos"
                       request({url: githubUrl, method: 'GET', headers: {'User-Agent': process.env.GITHUB_USER}}, function(err, res, bod) {
@@ -103,7 +102,41 @@ function takeTicket(bot, controller) {
                           var repoName = repos[repo].name
                           var action = { type: "button", name: repoName, text: repoName, value: repoName }
 
+                          var callback = {
+                            pattern: `${repos[repo].name}`,
+                            callback: function(reply, convo) {
+                              githubUrl = "https://api." + process.env.GITHUB_URL + "/repos/" + process.env.GITHUB_ORG + "/" + reply.text + "/git/refs/heads"
+                              var branch = key + "-" + is.fields.description.replace(/ /g, "-");
+                              request({url: githubUrl, method: 'GET', headers: {'User-Agent': process.env.GITHUB_USER}}, function(err, res, bod) {
+                                var refs = JSON.parse(bod)
+                                var master_sha = ""
+
+                                for (var ref in refs) {
+                                  if (refs[ref].ref == "refs/heads/master") {
+                                    master_sha = refs[ref].object.sha
+                                    break
+                                  }
+                                }
+                                var postData = {
+                                  ref: "refs/heads/" + branch,
+                                  sha: master_sha
+                                }
+                                request.post(githubUrl, {
+                                         headers: {'User-Agent': process.env.GITHUB_USER},
+                                         body: postData}, (err, res, bod) => {
+                                  if (error) { console.log(err); }
+                                  else {
+                                    var link = "https://" + process.env.GITHUB_URL + "/" + process.env.GITHUB_ORG + "/" + reply.text
+                                    convo.say(`branch has been made on the repo <${link}|${reply.text}>` + " with the branch name `" + branch + "`");
+                                    convo.next();
+                                  }
+                                });
+                              });
+                            }
+                          }
+
                           actions.push(action);
+                          callbacks.push(callback);
                         }
                         callActions(bot, message, actions, callbacks)
                       })
@@ -138,7 +171,7 @@ function takeTicket(bot, controller) {
                       }
                       callActions(bot, message, actions, callbacks)
                     }
-                  });
+                  // DEBUG - });
                 }
               });
             }
