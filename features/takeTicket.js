@@ -171,7 +171,7 @@ function takeTicket(bot, controller) {
                       }
                       callActions(bot, message, actions, callbacks)
                     }
-                  // DEBUG - });
+                  });
                 }
               });
             }
