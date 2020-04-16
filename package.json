@@ -16,7 +16,7 @@
     "botkit-storage-mongo": "^1.0.7",
     "express": "^4.13.3",
     "googleapis": "^35.0.0",
-    "https-proxy-agent": "^2.2.1",
+    "https-proxy-agent": "^2.2.3",
     "jfs": "^0.2.6",
     "jira-connector": "^2.10.0",
     "mongodb": "^3.1.10",
